@@ -1,0 +1,205 @@
+import numpy as np
+import astrotools2 as at
+from matplotlib import pyplot as plt
+from numpy import *
+import utilities as u
+from astrodbkit import astrodb
+import pyspeckit
+import StringIO
+import corner
+import shutil
+import os
+import decimal
+from scipy.stats import norm
+
+db = astrodb.get_db('/Users/saracamnasio/Dropbox/BDNYCdb/BDNYC.db')
+
+# data = np.genfromtxt("/Users/saracamnasio/Research/Projects/UnusuallyRB/Source_Data/2M2151+34.txt", delimiter='', dtype = float)
+
+def MC(n, DBorLOC, spt, JK, kind):
+	'''
+	*n*
+		int - number of MC iterations
+	*DBorLOC*
+		str - type "DB" or "LOCAL"
+	*SNR*
+		boolean - if True, it will take uncertainty array as is. If False (default) will approximate unc by diving flux by input SNR
+	*spt*
+		int - spectral type 10-21 (NIR)
+	*JK*
+		int - J-K color
+	*kind*
+		str - type of obj ("red", "young", "blue", "subwarf" or "standard" are accepted)
+	'''
+	if DBorLOC == "LOCAL":
+		path_input = input("Enter last bracket of obj path:")
+		path = "/Users/saracamnasio/Research/Projects/UnusuallyRB/Source_Data/{0}".format(path_input)
+		path_name2 = path_input.split('.')
+		name = path_name2[0]
+		raw = np.genfromtxt(path, delimiter='', dtype = float)
+		
+		W1 = np.array(raw[:,0])
+		F1 = np.array(raw[:,1])
+		U1 = np.array(raw[:,2])
+		SNR = input("SNR:")
+		if SNR == "y":
+			U1 = F1/U1
+	
+	elif DBorLOC == "DB":
+		spec_input = input("Enter spec_id of object:")
+		name = input("Enter name of object:")
+		# Wavelength:
+		w1 = db.query.execute("SELECT wavelength FROM spectra WHERE id={0}".format(spec_input)).fetchone() 
+		w1 = np.transpose(w1)
+		w1 = np.squeeze(w1)
+		# W = W-1.15
+		# Flux:
+		f1 = db.query.execute("SELECT flux FROM spectra WHERE id={0}".format(spec_input)).fetchone()
+		f1 = np.transpose(f1)
+		f1 = np.squeeze(f1)
+		# Header:
+		h = db.query.execute("SELECT header FROM spectra WHERE id={0}".format(spec_input)).fetchone()
+		# Uncertainty:
+		u1 = db.query.execute("SELECT unc FROM spectra WHERE id={0}".format(spec_input)).fetchone()
+		u1 = np.transpose(u1)
+		u1 = np.squeeze(u1)
+		
+		# if u1.any():
+			# print "WARNING: NO UNCERTAINTY ARRAY ON THIS SPECTRUM!"
+			# F1=(np.array(f1))
+			# W1=(np.array(w1))
+			# U1=(np.array(u1))
+			# U1 = F1*0.05
+		# else:
+		F1=(np.array(f1))
+		U1=(np.array(u1))
+		W1=(np.array(w1))
+		# U1=F1/U1
+
+	# Trimming the data
+	W2,F2,U2 = [i[np.where(np.logical_and( W1>1.15, W1<1.325))] for i in [W1,F1,U1]]
+	
+	# Recombining the W,F into one array in order to normalize it
+	recombined = np.vstack([W2,F2])
+	band = [1.15, 1.325]
+
+	# data_clean = u.scrub(recombined) 
+	# had to remove SCRUB because it fucked up baseline
+
+	data_clean = recombined
+	data = np.array(at.norm_spec(data_clean, band))
+
+	W3 = data[:,0]
+	F3 = data[:,1]
+	U3 = np.array(U2)
+	
+	# Squeezing into one dimension and shifting the wavelength to the 0 axis
+	W = np.squeeze(W3) 
+	W[:] = [x - 1.15 for x in W] #original was 1.15, 1.24 is to test Kraus idea  
+	F = np.squeeze(F3)
+	U = np.squeeze(U3)
+	U = np.array(U)
+	F = np.array(F)
+
+	# Check what the spectrum looks like:
+	plt.figure()
+	plt.errorbar(W, F, yerr=U, color='black') 
+	plt.ylabel('Normalized Flux F$_{\lambda}')
+	plt.xlabel('Wavelength ($\mu$m) - $W_0$')
+	plt.annotate('${0}$'.format(name), xy=(0.12, 0.2), xytext=(0.12, 0.2), color='black', weight='semibold', fontsize=20)
+	plt.ylim(0.15,1.4)
+	
+	print W,F,U
+	print np.shape(W)
+	print np.shape(F)
+	print np.shape(U)
+	print len(W)
+	print len(F)
+	print len(U)
+	# Loading the W,F and U into a spectrum 
+	medres = pyspeckit.Spectrum(xarr=W, data=F, error=U)
+	# medres.xarr.unit = 'micron'
+	medres.xarr.xtype ='wavelength'
+	medres2 = medres.copy()
+
+	coeff0 = []
+	coeff1 = []
+	coeff2 = []
+	coeff3 = []
+	coeff4 = []
+
+	for i in range(n):
+		medres2.data = medres.data + np.random.randn(medres.data.size)*medres.error
+		# medres2.plotter(xmin=0, xmax=0.175, ymin=0.15, ymax=1.4, errstyle='bars', color='grey')
+		# plt.ylabel('Flux F$_{\lambda}$')
+		# plt.xlabel('Wavelength ($\mu$m) - $W_0$')
+		medres2.baseline(xmin=0, xmax=0.175, ymin=0.15, ymax=1.4, subtract=False, highlight_fitregion=False, selectregion=True, exclude=[0.017129, 0.0317135, 0.088683, 0.107725], order=4)
+		coeffs = medres2.baseline.baselinepars
+		C0 = coeffs[4]
+		C1 = coeffs[3]
+		C2 = coeffs[2]
+		C3 = coeffs[1]
+		C4 = coeffs[0]
+		coeff0.append(C0)
+		coeff1.append(C1)
+		coeff2.append(C2)
+		coeff3.append(C3)
+		coeff4.append(C4)
+		# print C0
+		new_flux = medres2.baseline.basespec
+		plt.plot(W, new_flux, color='red', alpha=0.4)
+		
+	if not os.path.exists('/Users/saracamnasio/Research/Projects/UnusuallyRB/2016_Analysis/{0}'.format(name)):
+		os.makedirs('/Users/saracamnasio/Research/Projects/UnusuallyRB/2016_Analysis/{0}'.format(name))
+
+	# This provides the black base spectrum to be overplotted with the red fits in the line above, leave here!
+	plt.plot(W, F, color='black')
+	plt.savefig('/Users/saracamnasio/Research/Projects/UnusuallyRB/2016_Analysis/{0}/{0}_specfit.png'.format(name), format='png')
+	
+	# This calculates mean and standard deviation for all of the coefficients 
+	mu0,sigma0 = norm.fit(coeff0)
+	mu1,sigma1 = norm.fit(coeff1)
+	mu2,sigma2 = norm.fit(coeff2)
+	mu3,sigma3 = norm.fit(coeff3)
+	mu4,sigma4 = norm.fit(coeff4)
+	
+	# This plots the histogram distribution of the data (much like the corner plot). It's a sanity check to see if std and mu make sense.
+	plt.figure()
+	plt.title("Coefficient 0")
+	plt.hist(coeff0, 10, normed=True, facecolor='orange', histtype='stepfilled')
+	plt.savefig('/Users/saracamnasio/Research/Projects/UnusuallyRB/2016_Analysis/{0}/{0}_hist_0th.png'.format(name), format='png')
+	plt.figure()
+	plt.title("Coefficient 1")
+	plt.hist(coeff1, 10, normed=True, facecolor='orange', histtype='stepfilled') 
+	plt.savefig('/Users/saracamnasio/Research/Projects/UnusuallyRB/2016_Analysis/{0}/{0}_hist_1st.png'.format(name), format='png')
+
+	plt.figure()
+	plt.title("Coefficient 2")
+	plt.hist(coeff2, 10, normed=True, facecolor='orange', histtype='stepfilled')
+	plt.savefig('/Users/saracamnasio/Research/Projects/UnusuallyRB/2016_Analysis/{0}/{0}_hist_2nd.png'.format(name), format='png')
+	
+	plt.figure()
+	plt.title("Coefficient 3")
+	plt.hist(coeff3, 10, normed=True, facecolor='orange', histtype='stepfilled') 
+	plt.savefig('/Users/saracamnasio/Research/Projects/UnusuallyRB/2016_Analysis/{0}/{0}_hist_3rd.png'.format(name), format='png')
+	plt.figure()
+	plt.title("Coefficient 4")
+	plt.hist(coeff4, 10, normed=True, facecolor='orange', histtype='stepfilled')
+	plt.savefig('/Users/saracamnasio/Research/Projects/UnusuallyRB/2016_Analysis/{0}/{0}_hist_4th.png'.format(name), format='png')
+	
+	# print mu1, sigma1
+	# print mu2, sigma2
+ 
+	coeff0 = np.array(coeff0)
+	coeff1 = np.array(coeff1)
+	coeff2 = np.array(coeff2)
+	coeff3 = np.array(coeff3)
+	coeff4 = np.array(coeff4)
+	
+	coeff_MC = np.vstack([coeff0, coeff1, coeff2, coeff3, coeff4])
+	coeff_MC2 =  np.transpose(coeff_MC)
+	figure = corner.corner(coeff_MC2, labels=[r"$0th Coefficient$", r"$1st Coefficient$", r"$2nd Coefficient$", r"$3rd Coefficient$", r"$4th Coefficient$"], quantiles=[0.16, 0.5, 0.84], plot_contours=True, label_args={'fontsize':15}, color='black')
+	figure.gca().annotate("MC Uncertainty Analysis of {0} Pyspeckit Fitting".format(name), xy=(0.5, 1.0), xycoords="figure fraction", xytext=(0, -5), textcoords="offset points", ha="center", va="top")
+	plt.savefig('/Users/saracamnasio/Research/Projects/UnusuallyRB/2016_Analysis/{0}/{0}_MCplot.png'.format(name), format='png')
+	print '{0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}, {10}, {11}, {12}, {13} '.format(name, mu4, sigma4, mu3, sigma3, mu2, sigma2, mu1, sigma1, mu0, sigma0, spt, JK, kind)
+	
