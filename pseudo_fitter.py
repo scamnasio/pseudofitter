@@ -15,7 +15,7 @@ from scipy.stats import norm
 db = astrodb.get_db('/Users/saracamnasio/Dropbox/BDNYCdb/BDNYC.db')
 
 # data = np.genfromtxt("/Users/saracamnasio/Research/Projects/UnusuallyRB/Source_Data/2M2151+34.txt", delimiter='', dtype = float)
-
+# hi hello
 def MC(n, DBorLOC, spt, JK, kind):
 	'''
 	*n*
@@ -33,7 +33,8 @@ def MC(n, DBorLOC, spt, JK, kind):
 	'''
 	if DBorLOC == "LOCAL":
 		path_input = input("Enter last bracket of obj path:")
-		path = "/Users/saracamnasio/Research/Projects/UnusuallyRB/Source_Data/{0}".format(path_input)
+		path = "/Users/saracamnasio/Desktop/Database_Data/{0}".format(path_input)	
+		# path = "/Users/saracamnasio/Research/Projects/UnusuallyRB/Source_Data/{0}".format(path_input)
 		path_name2 = path_input.split('.')
 		name = path_name2[0]
 		raw = np.genfromtxt(path, delimiter='', dtype = float)
@@ -104,9 +105,9 @@ def MC(n, DBorLOC, spt, JK, kind):
 	# Check what the spectrum looks like:
 	plt.figure()
 	plt.errorbar(W, F, yerr=U, color='black') 
-	plt.ylabel('Normalized Flux F$_{\lambda}')
+	plt.ylabel('Normalized Flux F$_{\lambda}$')
 	plt.xlabel('Wavelength ($\mu$m) - $W_0$')
-	plt.annotate('${0}$'.format(name), xy=(0.12, 0.2), xytext=(0.12, 0.2), color='black', weight='semibold', fontsize=20)
+	plt.annotate('${0}$'.format(name), xy=(0.09, 0.2), xytext=(0.09, 0.2), color='black', weight='semibold', fontsize=15)
 	plt.ylim(0.15,1.4)
 	
 	print W,F,U
@@ -165,26 +166,40 @@ def MC(n, DBorLOC, spt, JK, kind):
 	
 	# This plots the histogram distribution of the data (much like the corner plot). It's a sanity check to see if std and mu make sense.
 	plt.figure()
-	plt.title("Coefficient 0")
 	plt.hist(coeff0, 10, normed=True, facecolor='orange', histtype='stepfilled')
+	plt.title("Coefficient 0")
+	plt.ylabel('Probability')
+	plt.xlabel('Coefficient value')
 	plt.savefig('/Users/saracamnasio/Research/Projects/UnusuallyRB/2016_Analysis/{0}/{0}_hist_0th.png'.format(name), format='png')
-	plt.figure()
-	plt.title("Coefficient 1")
-	plt.hist(coeff1, 10, normed=True, facecolor='orange', histtype='stepfilled') 
-	plt.savefig('/Users/saracamnasio/Research/Projects/UnusuallyRB/2016_Analysis/{0}/{0}_hist_1st.png'.format(name), format='png')
+
 
 	plt.figure()
-	plt.title("Coefficient 2")
+	plt.hist(coeff1, 10, normed=True, facecolor='orange', histtype='stepfilled') 
+	plt.title("Coefficient 1")
+	plt.ylabel('Probability')
+	plt.xlabel('Coefficient value')
+	plt.savefig('/Users/saracamnasio/Research/Projects/UnusuallyRB/2016_Analysis/{0}/{0}_hist_1st.png'.format(name), format='png')
+	
+	plt.figure()
 	plt.hist(coeff2, 10, normed=True, facecolor='orange', histtype='stepfilled')
+	plt.title("Coefficient 2")
+	plt.ylabel('Probability')
+	plt.xlabel('Coefficient value')
 	plt.savefig('/Users/saracamnasio/Research/Projects/UnusuallyRB/2016_Analysis/{0}/{0}_hist_2nd.png'.format(name), format='png')
 	
 	plt.figure()
-	plt.title("Coefficient 3")
 	plt.hist(coeff3, 10, normed=True, facecolor='orange', histtype='stepfilled') 
+	plt.title("Coefficient 3")
+	plt.ylabel('Probability')
+	plt.xlabel('Coefficient value')
 	plt.savefig('/Users/saracamnasio/Research/Projects/UnusuallyRB/2016_Analysis/{0}/{0}_hist_3rd.png'.format(name), format='png')
+
+
 	plt.figure()
-	plt.title("Coefficient 4")
 	plt.hist(coeff4, 10, normed=True, facecolor='orange', histtype='stepfilled')
+	plt.title("Coefficient 4")
+	plt.ylabel('Probability')
+	plt.xlabel('Coefficient value')
 	plt.savefig('/Users/saracamnasio/Research/Projects/UnusuallyRB/2016_Analysis/{0}/{0}_hist_4th.png'.format(name), format='png')
 	
 	# print mu1, sigma1
