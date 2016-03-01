@@ -107,16 +107,16 @@ def MC(n, DBorLOC, spt, JK, kind):
 	plt.errorbar(W, F, yerr=U, color='black') 
 	plt.ylabel('Normalized Flux F$_{\lambda}$')
 	plt.xlabel('Wavelength ($\mu$m) - $W_0$')
-	plt.annotate('${0}$'.format(name), xy=(0.09, 0.2), xytext=(0.09, 0.2), color='black', weight='semibold', fontsize=15)
+	plt.annotate('{0}'.format(name), xy=(0.12, 0.2), xytext=(0.12, 0.2), color='black', weight='semibold', fontsize=15)
 	plt.ylim(0.15,1.4)
 	
-	print W,F,U
-	print np.shape(W)
-	print np.shape(F)
-	print np.shape(U)
-	print len(W)
-	print len(F)
-	print len(U)
+	# print W,F,U
+	# print np.shape(W)
+	# print np.shape(F)
+	# print np.shape(U)
+	# print len(W)
+	# print len(F)
+	# print len(U)
 	# Loading the W,F and U into a spectrum 
 	medres = pyspeckit.Spectrum(xarr=W, data=F, error=U)
 	# medres.xarr.unit = 'micron'
@@ -179,7 +179,7 @@ def MC(n, DBorLOC, spt, JK, kind):
 	plt.ylabel('Probability')
 	plt.xlabel('Coefficient value')
 	plt.savefig('/Users/saracamnasio/Research/Projects/UnusuallyRB/2016_Analysis/{0}/{0}_hist_1st.png'.format(name), format='png')
-	
+
 	plt.figure()
 	plt.hist(coeff2, 10, normed=True, facecolor='orange', histtype='stepfilled')
 	plt.title("Coefficient 2")
