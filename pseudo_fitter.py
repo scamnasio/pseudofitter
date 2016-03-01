@@ -45,6 +45,8 @@ def MC(n, DBorLOC, spt, JK, kind):
 		SNR = input("SNR:")
 		if SNR == "y":
 			U1 = F1/U1
+		elif SNR == "n/a":
+			U1 = 0.5*F1
 	
 	elif DBorLOC == "DB":
 		spec_input = input("Enter spec_id of object:")
@@ -107,7 +109,7 @@ def MC(n, DBorLOC, spt, JK, kind):
 	plt.errorbar(W, F, yerr=U, color='black') 
 	plt.ylabel('Normalized Flux F$_{\lambda}$')
 	plt.xlabel('Wavelength ($\mu$m) - $W_0$')
-	plt.annotate('{0}'.format(name), xy=(0.11, 0.2), xytext=(0.11, 0.2), color='black', weight='semibold', fontsize=15)
+	plt.annotate('{0}'.format(name), xy=(0.11, 0.7), xytext=(0.11, 0.7), color='black', weight='semibold', fontsize=15)
 	plt.ylim(0.15,1.4)
 	
 	# print W,F,U
