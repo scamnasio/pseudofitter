@@ -107,7 +107,7 @@ def MC(n, DBorLOC, spt, JK, kind):
 	plt.errorbar(W, F, yerr=U, color='black') 
 	plt.ylabel('Normalized Flux F$_{\lambda}$')
 	plt.xlabel('Wavelength ($\mu$m) - $W_0$')
-	plt.annotate('{0}'.format(name), xy=(0.12, 0.2), xytext=(0.12, 0.2), color='black', weight='semibold', fontsize=15)
+	plt.annotate('{0}'.format(name), xy=(0.11, 0.2), xytext=(0.11, 0.2), color='black', weight='semibold', fontsize=15)
 	plt.ylim(0.15,1.4)
 	
 	# print W,F,U
