@@ -16,12 +16,10 @@ db = astrodb.get_db('/Users/saracamnasio/Dropbox/BDNYCdb/BDNYC.db')
 
 # data = np.genfromtxt("/Users/saracamnasio/Research/Projects/UnusuallyRB/Source_Data/2M2151+34.txt", delimiter='', dtype = float)
 # hi hello
-def MC(n, DBorLOC, spt, JK, kind):
+def MC(n, spt, JK, kind):
 	'''
 	*n*
 		int - number of MC iterations
-	*DBorLOC*
-		str - type "DB" or "LOCAL"
 	*SNR*
 		boolean - if True, it will take uncertainty array as is. If False (default) will approximate unc by diving flux by input SNR
 	*spt*
@@ -31,59 +29,27 @@ def MC(n, DBorLOC, spt, JK, kind):
 	*kind*
 		str - type of obj ("red", "young", "blue", "subwarf" or "standard" are accepted)
 	'''
-	if DBorLOC == "LOCAL":
-		path_input = input("Enter last bracket of obj path:")
-		path = "/Users/saracamnasio/Desktop/Database_Data/{0}".format(path_input)	
-		# path = "/Users/saracamnasio/Research/Projects/UnusuallyRB/Source_Data/{0}".format(path_input)
-		path_name2 = path_input.split('.')
-		name = path_name2[0]
-		raw = np.genfromtxt(path, delimiter='', dtype = float)
-		
-		W1 = np.array(raw[:,0])
-		F1 = np.array(raw[:,1])
-		U1 = np.array(raw[:,2])
-		SNR = input("SNR:")
-		if SNR == "y":
-			U1 = F1/U1
-		elif SNR == "n/a":
-			U1 = 0.5*F1
 	
-	elif DBorLOC == "DB":
-		spec_input = input("Enter spec_id of object:")
-		name = input("Enter name of object:")
-		# Wavelength:
-		w1 = db.query.execute("SELECT wavelength FROM spectra WHERE id={0}".format(spec_input)).fetchone() 
-		w1 = np.transpose(w1)
-		w1 = np.squeeze(w1)
-		# W = W-1.15
-		# Flux:
-		f1 = db.query.execute("SELECT flux FROM spectra WHERE id={0}".format(spec_input)).fetchone()
-		f1 = np.transpose(f1)
-		f1 = np.squeeze(f1)
-		# Header:
-		h = db.query.execute("SELECT header FROM spectra WHERE id={0}".format(spec_input)).fetchone()
-		# Uncertainty:
-		u1 = db.query.execute("SELECT unc FROM spectra WHERE id={0}".format(spec_input)).fetchone()
-		u1 = np.transpose(u1)
-		u1 = np.squeeze(u1)
-		
-		# if u1.any():
-			# print "WARNING: NO UNCERTAINTY ARRAY ON THIS SPECTRUM!"
-			# F1=(np.array(f1))
-			# W1=(np.array(w1))
-			# U1=(np.array(u1))
-			# U1 = F1*0.05
-		# else:
-		F1=(np.array(f1))
-		U1=(np.array(u1))
-		W1=(np.array(w1))
-		# U1=F1/U1
+	path_input = input("Enter last bracket of obj path:")
+	path = "/Users/saracamnasio/Desktop/Database_Data/{0}".format(path_input)	
+	# path = "/Users/saracamnasio/Research/Projects/UnusuallyRB/Source_Data/{0}".format(path_input)
+	path_name2 = path_input.split('.')
+	name = path_name2[0]
+	raw = np.genfromtxt(path, delimiter='', dtype = float)
+	
+	W1 = np.array(raw[:,0])
+	F1 = np.array(raw[:,1])
+	U1 = np.array(raw[:,2])
 
 	# Trimming the data
-	W2,F2,U2 = [i[np.where(np.logical_and( W1>1.15, W1<1.325))] for i in [W1,F1,U1]]
+	W2,F2,U2 = [i[np.where(np.logical_and(W1>1.15, W1<1.325))] for i in [W1,F1,U1]]
 	
+	W2[np.isnan(W2)] = 0
+	F2[np.isnan(F2)] = 0
+	U2[np.isnan(U2)] = 0
+
 	# Recombining the W,F into one array in order to normalize it
-	recombined = np.vstack([W2,F2])
+	recombined = np.vstack([W2,F2,U2])
 	band = [1.15, 1.325]
 
 	# data_clean = u.scrub(recombined) 
@@ -94,15 +60,24 @@ def MC(n, DBorLOC, spt, JK, kind):
 
 	W3 = data[:,0]
 	F3 = data[:,1]
-	U3 = np.array(U2)
+	U3 = data[:,2]
+	# U3 = np.array(U2)
 	
 	# Squeezing into one dimension and shifting the wavelength to the 0 axis
 	W = np.squeeze(W3) 
 	W[:] = [x - 1.15 for x in W] #original was 1.15, 1.24 is to test Kraus idea  
 	F = np.squeeze(F3)
+	F = np.array(F)
 	U = np.squeeze(U3)
 	U = np.array(U)
-	F = np.array(F)
+
+	SNR = input("SNR:")
+	if SNR == "y":
+		U = F/U
+	elif SNR == "n/a":
+		U = 0.05*F
+	elif SNR == "n":
+		U = U
 
 	# Check what the spectrum looks like:
 	plt.figure()
@@ -112,13 +87,6 @@ def MC(n, DBorLOC, spt, JK, kind):
 	plt.annotate('{0}'.format(name), xy=(0.11, 0.7), xytext=(0.11, 0.7), color='black', weight='semibold', fontsize=15)
 	plt.ylim(0.15,1.4)
 	
-	# print W,F,U
-	# print np.shape(W)
-	# print np.shape(F)
-	# print np.shape(U)
-	# print len(W)
-	# print len(F)
-	# print len(U)
 	# Loading the W,F and U into a spectrum 
 	medres = pyspeckit.Spectrum(xarr=W, data=F, error=U)
 	# medres.xarr.unit = 'micron'
