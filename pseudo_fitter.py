@@ -31,7 +31,7 @@ def MC(n, spt, JK, kind):
 	'''
 	
 	path_input = input("Enter last bracket of obj path:")
-	path = "/Users/saracamnasio/Desktop/Database_Data/{0}".format(path_input)	
+	path = "/Users/saracamnasio/Research/Projects/UnusuallyRB/Source_Data/{0}".format(path_input)	
 	# path = "/Users/saracamnasio/Research/Projects/UnusuallyRB/Source_Data/{0}".format(path_input)
 	path_name2 = path_input.split('.')
 	name = path_name2[0]
@@ -40,6 +40,19 @@ def MC(n, spt, JK, kind):
 	W1 = np.array(raw[:,0])
 	F1 = np.array(raw[:,1])
 	U1 = np.array(raw[:,2])
+
+	'''
+	If Angstroms:
+	'''
+	# W1 = W1/10000
+
+	'''
+	- If U1 does not exist (data without uncertainty) please comment out line 42 ("U = np.array(raw[:,2])") and uncomment the first line below
+	- If U1 is SNR uncomment the second line
+	'''
+
+	# U1 = 0.05*F1
+	U1 = F1/U1
 
 	# Trimming the data
 	W2,F2,U2 = [i[np.where(np.logical_and(W1>1.15, W1<1.325))] for i in [W1,F1,U1]]
@@ -61,7 +74,6 @@ def MC(n, spt, JK, kind):
 	W3 = data[:,0]
 	F3 = data[:,1]
 	U3 = data[:,2]
-	# U3 = np.array(U2)
 	
 	# Squeezing into one dimension and shifting the wavelength to the 0 axis
 	W = np.squeeze(W3) 
@@ -71,13 +83,15 @@ def MC(n, spt, JK, kind):
 	U = np.squeeze(U3)
 	U = np.array(U)
 
-	SNR = input("SNR:")
-	if SNR == "y":
-		U = F/U
-	elif SNR == "n/a":
-		U = 0.05*F
-	elif SNR == "n":
-		U = U
+	
+
+	# SNR = input("SNR:")
+	# if SNR == "y":
+	# 	U = F/U
+	# elif SNR == "n/a":
+	# 	U = 0.05*F
+	# elif SNR == "n":
+	# 	U = U
 
 	# Check what the spectrum looks like:
 	plt.figure()
