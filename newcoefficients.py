@@ -50,7 +50,7 @@ def fits():
 	plt.figure()
 	P = plt.subplot(321)
 	plt.ylabel("$4^{th} Coefficient$", fontsize=17)
-	plt.scatter(spt, fourth, s=50, marker='o', c=categories, alpha=0.7, label=types)
+	plt.scatter(spt, fourth, s=70, marker='o', c=categories, alpha=0.7, label=types)
 	plt.errorbar(spt, fourth, yerr=fourth_err, fmt=None, alpha=0.5, ecolor='k')
 	plt.xlim(9,20)
 	plt.xticks(np.arange(9,20,1))
@@ -60,7 +60,7 @@ def fits():
 	''' 3rd '''
 	
 	P2 = plt.subplot(322)
-	plt.scatter(spt, third, s=50, marker='o', c=categories, alpha=0.7, label=types)
+	plt.scatter(spt, third, s=70, marker='o', c=categories, alpha=0.7, label=types)
 	plt.errorbar(spt, third, yerr=third_err, fmt=None, alpha=0.5, ecolor='k')
 	plt.ylabel("$3^{rd} Coefficient$", fontsize=17)
 	plt.xlim(9,20)
@@ -72,7 +72,7 @@ def fits():
 
 	P3 = plt.subplot(323)
 	plt.ylabel("$2^{nd} Coefficient$", fontsize=17)
-	plt.scatter(spt, second, s=50, marker='o', c=categories, alpha=0.7, label=types)
+	plt.scatter(spt, second, s=70, marker='o', c=categories, alpha=0.7, label=types)
 	plt.errorbar(spt, second, yerr=second_err, fmt=None, alpha=0.5, ecolor='k')
 	plt.xlim(9,20)
 	plt.xticks(np.arange(9,20,1))
@@ -85,7 +85,7 @@ def fits():
 	#plt.title("J-K deviation vs SpT")
 	plt.xlabel("$Spectral Type$", fontsize=13)
 	plt.ylabel("$1^{st} Coefficient$", fontsize=17)
-	plt.scatter(spt, first, s=50, marker='o', c=categories, alpha=0.7, label=types)
+	plt.scatter(spt, first, s=70, marker='o', c=categories, alpha=0.7, label=types)
 	plt.errorbar(spt, first, yerr=first_err, fmt=None, alpha=0.5, ecolor='k')
 	plt.xlim(9,20)
 	plt.xticks(np.arange(9,20,1))
@@ -96,7 +96,7 @@ def fits():
 	P5 = plt.subplot(325)
 	#plt.title("J-K deviation vs SpT")
 	plt.xlabel("$Spectral Type$", fontsize=13)
-	plt.scatter(spt, zero, s=50, marker='o', c=categories, alpha=0.7, label=types)
+	plt.scatter(spt, zero, s=70, marker='o', c=categories, alpha=0.7, label=types)
 	plt.errorbar(spt, zero, yerr=zero_err, fmt=None, alpha=0.5, ecolor='k')
 	plt.ylabel("$0^{th} Coefficient$", fontsize=17)
 	plt.xlim(9,20)
@@ -128,7 +128,7 @@ def fits():
 	plt.figure()
 	plt.subplot(321)
 	plt.ylabel("$4^{th} Coefficient$", fontsize=17)
-	plt.scatter(JK, fourth, s=50, marker='o', c=categories, alpha=0.7, label=types)
+	plt.scatter(JK, fourth, s=70, marker='o', c=categories, alpha=0.7, label=types)
 	plt.errorbar(JK, fourth, yerr=fourth_err, fmt=None, alpha=0.5, ecolor='k')
 	plt.ylim(-750, 10500)
 	plt.xlim(.5, 3)
@@ -137,7 +137,7 @@ def fits():
 	
 	plt.subplot(322)
 	plt.ylabel("$3^{rd} Coefficient$", fontsize=17)
-	plt.scatter(JK, third, s=50, marker='o', c=categories, alpha=0.7, label=types)
+	plt.scatter(JK, third, s=70, marker='o', c=categories, alpha=0.7, label=types)
 	plt.errorbar(JK, third, yerr=third_err, fmt=None, alpha=0.5, ecolor='k')
 	plt.ylim(-4500, 0)
 	plt.xlim(.8,3)
@@ -145,13 +145,14 @@ def fits():
 	''' 2ND '''
 
 	plt.subplot(323)		
-	plt.scatter(JK, second, s=50, marker='o', c=categories, alpha=0.7, label=types)
+	plt.scatter(JK, second, s=70, marker='o', c=categories, alpha=0.7, label=types)
 	plt.errorbar(JK, second, yerr=second_err, fmt=None, alpha=0.5, ecolor='k')
 	plt.ylim(50, 650)
 	plt.xlim(.8,3)
 	plt.ylabel("$2^{nd} Coefficient$", fontsize=17)
 	
 	''' 1ST '''
+
 	plt.subplot(324)
 	plt.xlabel("$J-K$", fontsize=13)
 	
@@ -162,11 +163,12 @@ def fits():
 	plt.ylabel("$1^{st} Coefficient$", fontsize=17)
 	
 	''' 0TH '''
+
 	plt.subplot(325)
 	plt.xlabel("$J-K$", fontsize=13)
 	plt.ylabel("$0^{th} Coefficient$", fontsize=17)
 	
-	plt.scatter(JK, zero, s=50, marker='o', c=categories, alpha=0.7, label=types)
+	plt.scatter(JK, zero, s=70, marker='o', c=categories, alpha=0.7, label=types)
 	plt.errorbar(JK, zero, yerr=zero_err, fmt=None, alpha=0.5, ecolor='k')
 	plt.ylim(0.65, 1.25)
 	plt.xlim(.8,3)
