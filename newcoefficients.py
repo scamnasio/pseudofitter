@@ -1,238 +1,180 @@
+''' 
+Written by Sara Camnasio
+CUNY Hunter College class of 2016
+sara.camnasio@gmail.com
+'''
+
 import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
 import scipy
 from matplotlib import axis
 from matplotlib.pyplot import step, legend, xlim, ylim, show
-#from matplotlib.pyplot import *
+import collections
+import matplotlib.lines as mlines
 
-source = np.genfromtxt('/Users/saracamnasio/Desktop/Master_Sheet.csv',delimiter=',', skip_header=1, dtype = str)
-names = source[:,0]
-repeats = collections.Counter(names)
-# for n, label in zip(np.array([float(source[:,0])], np.array(source[:,4]))):
-# if label=="young":
+source = np.genfromtxt('/Users/saracamnasio/Desktop/Master_Sheet.csv',delimiter=',', skip_header=1, dtype = float)
+source2 = np.genfromtxt('/Users/saracamnasio/Desktop/Master_Sheet.csv',delimiter=',', skip_header=1, dtype = str)
 
-#red
-
-# namer = np.array([row[0] for row in red])
-# ftr = 	np.array([float(row[1]) for row in red])
-# ftr_unc = 
-# thr = 	np.array([float(row[2]) for row in red])
-# twr = 	np.array([float(row[3]) for row in red]) 
-# oner = 	np.array([float(row[4]) for row in red])
-# zr = 	np.array([float(row[5]) for row in red])
-# sptr = 	np.array([float(row[6]) for row in red])
-# JKr = 	np.array([float(row[7]) for row in red])
-
-
-# #young
-
-# namey = [row[0] for row in young]
-# fty = 	np.array([float(row[1]) for row in young])
-# thy = 	np.array([float(row[2]) for row in young])
-# twy = 	np.array([float(row[3]) for row in young])
-# oney = 	np.array([float(row[4]) for row in young])
-# zy = 	np.array([float(row[5]) for row in young])
-# spty = 	np.array([float(row[6]) for row in young])
-# JKy = 	np.array([float(row[7]) for row in young])
-
-
-
-# #blue
-
-# nameb = [row[0] for row in blue]
-# ftb = 	np.array([float(row[1]) for row in blue])
-# thb = 	np.array([float(row[2]) for row in blue])
-# twb = 	np.array([float(row[3]) for row in blue])
-# oneb = 	np.array([float(row[4]) for row in blue])
-# zb = 	np.array([float(row[5]) for row in blue])
-# sptb = 	np.array([float(row[6]) for row in blue])
-# JKb = 	np.array([float(row[7]) for row in blue])
-
-# #field
-
-# namef = [row[0] for row in field]
-# ftf = 	np.array([float(row[1]) for row in field])
-# thf = 	np.array([float(row[2]) for row in field])
-# twf = 	np.array([float(row[3]) for row in field])
-# onef = 	np.array([float(row[4]) for row in field])
-# zf = 	np.array([float(row[5]) for row in field])
-# sptf = 	np.array([float(row[6]) for row in field])
-# JKf = 	np.array([float(row[7]) for row in field])
-
-# names = [namey,nameb, namer, namef]
+name = np.array(source2[:,0])
+spt = np.array(source[:,2])
+types = np.array(source2[:,4])
+JK = np.array(source[:,7])
+fourth = np.array(source[:,8])
+fourth_err = np.array(source[:,9])
+third = np.array(source[:,10])
+third_err = np.array(source[:,11])
+second = np.array(source[:,12])
+second_err = np.array(source[:,13])
+first = np.array(source[:,14])
+first_err = np.array(source[:,15])
+zero = np.array(source[:,16])
+zero_err = np.array(source[:,17])
 
 def fits():
-	
-	color = '#F26D00'
+
+	categories = []
+	for n in types:
+		if n == 'young':
+			categories.append("r")
+		elif n == "blue":
+			categories.append("b")
+		elif n == "red":
+			categories.append("m")
+
+	categories = np.array(categories)
 
 	''' Spectral type VS Coeff '''
+	
 	''' 4th '''
 	plt.figure()
-	plt.subplot(321)
-	plt.title("Spectral Type vs Fit Coefficients", fontsize=13)
-	#plt.errorbar(sptss, JKss, yerr=errss, fmt=None, ecolor='b')
-	# plt.xlabel("Spectral Type", fontsize=13)
-	if source[:,4]=="young":
-		plt.plot(np.array([float(source[:,2])]), np.array([float(source[:,8])]), marker='o', linestyle='None', color='r', alpha=0.7, label='Young')
-		plt.errorbar(np.array([float(source[:,2])]), np.array([float(source[:,8])]), yerr=np.array([float(source[:,9])]), fmt=None, alpha=0.5, ecolor='r')
-	elif source[:,4]=="blue":
-		plt.plot(np.array([float(source[:,2])]), np.array([float(source[:,8])]), marker='o', linestyle='None', color='b', alpha=0.7, label='Blue')
-		plt.errorbar(np.array([float(source[:,2])]), np.array([float(source[:,8])]), yerr=np.array([float(source[:,9])]), fmt=None, alpha=0.5, ecolor='b')
-	elif source[:,4]=="red":
-		plt.plot(np.array([float(source[:,2])]), np.array([float(source[:,8])]), marker='o', linestyle='None', color='m', alpha=0.7, label='Red')
-		plt.errorbar(np.array([float(source[:,2])]), np.array([float(source[:,8])]), yerr=np.array([float(source[:,9])]), fmt=None, alpha=0.5, ecolor='m')
-	
-	# repeats_2 = [i for i in repeats if repeats[i]>1]
-	# for x, y in zip(np.array([float(source[:,2])]),np.array([float(source[:,8])])):
-	# 	if 
-	plt.ylabel("4th Coefficient", fontsize=17)
+	P = plt.subplot(321)
+	plt.ylabel("$4^{th} Coefficient$", fontsize=17)
+	plt.scatter(spt, fourth, s=50, marker='o', c=categories, alpha=0.7, label=types)
+	plt.errorbar(spt, fourth, yerr=fourth_err, fmt=None, alpha=0.5, ecolor='k')
+	plt.xlim(9,20)
+	plt.xticks(np.arange(9,20,1))
+	labels = ['','L0','L1','L2','L3','L4','L5','L6','L7','L8','L9']
+	P.set_xticklabels(labels)
 
-	# linear_fit1 = scipy.stats.pearsonr(spec_type_fit, fourth_coeff)
-	# plt.annotate('Linear Fit Index: {0}'.format(linear_fit1), xy=(1.225, 1), xytext=(1.225, 1), color='black', weight='semibold', fontsize=8)
-	
-	# xlim(9.5, 20)
-	# ylim(-11, 8)
-	
 	''' 3rd '''
 	
-	plt.subplot(322)
-	#plt.errorbar(sptss, JKss, yerr=errss, fmt=None, ecolor='b')
-	# plt.xlabel("Spectral Type", fontsize=13)
-	plt.plot(sptr, thr, marker='o', linestyle='None', color=color, alpha=0.7, label='Red Non-Young')
-	plt.plot(spty, thy, marker='o', linestyle='None', color='r', alpha=0.7, label='Red Young')
-	plt.plot(sptb, thb, marker='o', linestyle='None', color='b',alpha=0.7, label='Blue Non-Subdwarfs')
-	plt.plot(sptf, thf, marker='*', linestyle='None', color='k',alpha=0.7, label='Field Gravity Objects')
-	# linear_fit2 = scipy.stats.pearsonr(spec_type_fit, third_coeff)
-	# plt.annotate('Linear Fit Index: {0}'.format(linear_fit2), xy=(1.225, 1), xytext=(1.225, 1), color='black', weight='semibold', fontsize=8)
-	# plt.legend(loc=3)
-	plt.ylabel("3rd Coefficient", fontsize=17)
-	# xlim(9.5, 20)
-	# ylim(-11, 8)
+	P2 = plt.subplot(322)
+	plt.scatter(spt, third, s=50, marker='o', c=categories, alpha=0.7, label=types)
+	plt.errorbar(spt, third, yerr=third_err, fmt=None, alpha=0.5, ecolor='k')
+	plt.ylabel("$3^{rd} Coefficient$", fontsize=17)
+	plt.xlim(9,20)
+	plt.xticks(np.arange(9,20,1))
+	labels = ['','L0','L1','L2','L3','L4','L5','L6','L7','L8','L9']
+	P2.set_xticklabels(labels)
 	   
-	#2nd    
-	plt.subplot(323)
-	# plt.xlabel("Spectral Type", fontsize=13)
-	plt.plot(sptr, twr, marker='o', linestyle='None', color=color, alpha=0.7, label='Red Non-Young')
-	plt.plot(spty, twy, marker='o', linestyle='None', color='r', alpha=0.7, label='Red Young')
-	plt.plot(sptb, twb, marker='o', linestyle='None', color='b',alpha=0.7, label='Blue Non-Subdwarfs')
-	plt.plot(sptf, twf, marker='*', linestyle='None', color='k',alpha=0.7, label='Field Gravity Objects')
-	# linear_fit3 = scipy.stats.pearsonr(spec_type_fit, second_coeff)
-	# plt.annotate('Linear Fit Index: {0}'.format(linear_fit3), xy=(1.225, 1), xytext=(1.225, 1), color='black', weight='semibold', fontsize=8)
-	plt.ylabel("2nd Coefficient", fontsize=17)
-	# xlim(9.5, 20)
-	#ylim(-1.1, 1)
+	''' 2ND '''
+
+	P3 = plt.subplot(323)
+	plt.ylabel("$2^{nd} Coefficient$", fontsize=17)
+	plt.scatter(spt, second, s=50, marker='o', c=categories, alpha=0.7, label=types)
+	plt.errorbar(spt, second, yerr=second_err, fmt=None, alpha=0.5, ecolor='k')
+	plt.xlim(9,20)
+	plt.xticks(np.arange(9,20,1))
+	labels = ['','L0','L1','L2','L3','L4','L5','L6','L7','L8','L9']
+	P3.set_xticklabels(labels)
+
 	
-	#1st
-	plt.subplot(324)
+	''' 1ST '''
+	P4 = plt.subplot(324)
 	#plt.title("J-K deviation vs SpT")
-	plt.xlabel("Spectral Type", fontsize=13)
-	plt.plot(sptr, oner, marker='o', linestyle='None', color=color, alpha=0.7, label='Red Non-Young')
-	plt.plot(spty, oney, marker='o', linestyle='None', color='r', alpha=0.7, label='Red Young')
-	plt.plot(sptb, oneb, marker='o', linestyle='None', color='b',alpha=0.7, label='Blue Non-Subdwarf')
-	plt.plot(sptf, onef, marker='*', linestyle='None', color='k',alpha=0.7, label='Field Gravity Objects')
-	# linear_fit4 = scipy.stats.pearsonr(spec_type_fit, first_coeff)
-	# plt.annotate('Linear Fit Index: {0}'.format(linear_fit4), xy=(1.225, 1), xytext=(1.225, 1), color='black', weight='semibold', fontsize=8)
-	plt.ylabel("1st Coefficient", fontsize=17)
+	plt.xlabel("$Spectral Type$", fontsize=13)
+	plt.ylabel("$1^{st} Coefficient$", fontsize=17)
+	plt.scatter(spt, first, s=50, marker='o', c=categories, alpha=0.7, label=types)
+	plt.errorbar(spt, first, yerr=first_err, fmt=None, alpha=0.5, ecolor='k')
+	plt.xlim(9,20)
+	plt.xticks(np.arange(9,20,1))
+	labels = ['','L0','L1','L2','L3','L4','L5','L6','L7','L8','L9']
+	P4.set_xticklabels(labels)
 	
-	# xlim(9.5, 20)
-	#ylim(-1.1, 1)
-	
-	#0th
-	plt.subplot(325)
+	''' 0TH '''
+	P5 = plt.subplot(325)
 	#plt.title("J-K deviation vs SpT")
-	plt.xlabel("Spectral Type", fontsize=13)
-	plt.plot(sptr, zr, marker='o', linestyle='None', color=color, alpha=0.7, label='Red Non-Young')
-	plt.plot(spty, zy, marker='o', linestyle='None', color='r', alpha=0.7, label='Red Young')
-	plt.plot(sptb, zb, marker='o', linestyle='None', color='b',alpha=0.7, label='Blue Non-Subdwarf')
-	plt.plot(sptf, zf, marker='*', linestyle='None', color='k',alpha=0.7, label='Field Gravity Objects')
-	# linear_fit5 = scipy.stats.pearsonr(spec_type_fit, zeroeth_coeff)
-	# plt.annotate('Linear Fit Index: {0}'.format(linear_fit5), xy=(1.225, 1), xytext=(1.225, 1), color='black', weight='semibold', fontsize=8)
-	plt.ylabel("0th Coefficient", fontsize=17)
-	plt.legend(loc=1, fontsize=10)
-	# xlim(9.5, 20)
-	#ylim(0, 3.5)
+	plt.xlabel("$Spectral Type$", fontsize=13)
+	plt.scatter(spt, zero, s=50, marker='o', c=categories, alpha=0.7, label=types)
+	plt.errorbar(spt, zero, yerr=zero_err, fmt=None, alpha=0.5, ecolor='k')
+	plt.ylabel("$0^{th} Coefficient$", fontsize=17)
+	plt.xlim(9,20)
+	plt.xticks(np.arange(9,20,1))
+	labels = ['','L0','L1','L2','L3','L4','L5','L6','L7','L8','L9']
+	P5.set_xticklabels(labels)
+	# plt.legend(loc=1, fontsize=10)
+	
+	# Create fake data (void) to use the linestyles for the legend of the sigmas:
+	data1 = mlines.Line2D([], [], color='r', marker='o', label="Red", linestyle='')
+	data2 = mlines.Line2D([], [], color='m', marker='o', label="Young", linestyle='')
+	data3 = mlines.Line2D([], [], color='b', marker='o', label="Blue", linestyle='')
+	plt.legend((data1, data2, data3), ("Red", "Young", "Blue"), loc=1,  numpoints=1)
+
 	
 	plt.show()
 	
-	# color vs coefficie
+	''' 
+	___________________________________
+	___________________________________
+	___________________________________
+
+	Color VS Coefficients
 	
-	#4th
+	4TH 
+
+	'''
+
 	plt.figure()
 	plt.subplot(321)
-	plt.title("J-K Color vs Fit Coefficients", fontsize=13)
-	#plt.errorbar(sptss, JKss, yerr=errss, fmt=None, ecolor='b')
-	# plt.xlabel("J-K", fontsize=13)
-	plt.plot(JKr, np.array([float(row[1]) for row in red]), marker='o', linestyle='None', color=color, alpha=0.7, label='Red Non-Young')
-	plt.plot(JKy, fty, marker='o', linestyle='None', color='r', alpha=0.7, label='Red Young')
-	plt.plot(JKb, ftb, marker='o', linestyle='None', color='b',alpha=0.7, label='Blue Non-Subdwarfs')
-	plt.plot(JKf, ftf, marker='*', linestyle='None', color='k',alpha=0.7, label='Field Gravity Objects')
-	# linear_fit6 = scipy.stats.pearsonr(JK_fit, fourth_coeff)
-	# plt.annotate('Linear Fit Index: {0}'.format(linear_fit6), xy=(1.225, 1), xytext=(1.225, 1), color='black', weight='semibold', fontsize=8)
-	plt.ylabel("4th Coefficient", fontsize=17)
-	# xlim(9.5, 20)
-	# ylim(-11, 8)
+	plt.ylabel("$4^{th} Coefficient$", fontsize=17)
+	plt.scatter(JK, fourth, s=50, marker='o', c=categories, alpha=0.7, label=types)
+	plt.errorbar(JK, fourth, yerr=fourth_err, fmt=None, alpha=0.5, ecolor='k')
+	plt.ylim(-750, 10500)
+	plt.xlim(.5, 3)
 	
-	#3rd
+	''' 3RD '''
 	
 	plt.subplot(322)
-	#plt.errorbar(sptss, JKss, yerr=errss, fmt=None, ecolor='b')
-	# plt.xlabel("J-K", fontsize=13)
-	plt.plot(JKr, thr, marker='o', linestyle='None', color=color, alpha=0.7, label='Red Non-Young')
-	plt.plot(JKy, thy, marker='o', linestyle='None', color='r', alpha=0.7, label='Red Young')
-	plt.plot(JKb, thb, marker='o', linestyle='None', color='b',alpha=0.7, label='Blue Non-Subdwarf')
-	plt.plot(JKf, thf, marker='*', linestyle='None', color='k',alpha=0.7, label='Field Gravity Objects')
-	# linear_fit7 = scipy.stats.pearsonr(JK_fit, third_coeff)
-	# plt.annotate('Linear Fit Index: {0}'.format(linear_fit7), xy=(1.225, 1), xytext=(1.225, 1), color='black', weight='semibold', fontsize=8)
-	# plt.legend(loc=3)
-	plt.ylabel("3rd Coefficient", fontsize=17)
-	# xlim(.9, 2.5)
-	# ylim(-11, 8)
+	plt.ylabel("$3^{rd} Coefficient$", fontsize=17)
+	plt.scatter(JK, third, s=50, marker='o', c=categories, alpha=0.7, label=types)
+	plt.errorbar(JK, third, yerr=third_err, fmt=None, alpha=0.5, ecolor='k')
+	plt.ylim(-4500, 0)
+	plt.xlim(.8,3)
 	   
-	#2nd    
-	plt.subplot(323)
-	# plt.xlabel("J-K", fontsize=13)
-	plt.plot(JKr, twr, marker='o', linestyle='None', color=color, alpha=0.7, label='Red Non-Young')
-	plt.plot(JKy, twy, marker='o', linestyle='None', color='r', alpha=0.7, label='Red Young')
-	plt.plot(JKb, twb, marker='o', linestyle='None', color='b',alpha=0.7, label='Blue Non-Subdwarf')
-	plt.plot(JKf, twf, marker='*', linestyle='None', color='k',alpha=0.7, label='Field Gravity Objects')
-	# linear_fit8 = scipy.stats.pearsonr(JK_fit, second_coeff)
-	# plt.annotate('Linear Fit Index: {0}'.format(linear_fit8), xy=(1.225, 1), xytext=(1.225, 1), color='black', weight='semibold', fontsize=8)
-	plt.ylabel("2nd Coefficient", fontsize=17)
-	# xlim(.9, 2.5)
-	#ylim(-1.1, 1)
+	''' 2ND '''
+
+	plt.subplot(323)		
+	plt.scatter(JK, second, s=50, marker='o', c=categories, alpha=0.7, label=types)
+	plt.errorbar(JK, second, yerr=second_err, fmt=None, alpha=0.5, ecolor='k')
+	plt.ylim(50, 650)
+	plt.xlim(.8,3)
+	plt.ylabel("$2^{nd} Coefficient$", fontsize=17)
 	
-	#1st
+	''' 1ST '''
 	plt.subplot(324)
-	#plt.title("J-K deviation vs SpT")
-	plt.xlabel("J-K", fontsize=13)
-	plt.plot(JKr, oner, marker='o', linestyle='None', color=color, alpha=0.7,  label='Red Non-Young')
-	plt.plot(JKy, oney, marker='o', linestyle='None', color='r', alpha=0.7, label='Red Young')
-	plt.plot(JKb, oneb, marker='o', linestyle='None', color='b',alpha=0.7, label='Blue Non-Subdwarf')
-	plt.plot(JKf, onef, marker='*', linestyle='None', color='k',alpha=0.7, label='Field Gravity Objects')
-	# linear_fit9 = scipy.stats.pearsonr(JK_fit, first_coeff)
-	# plt.annotate('Linear Fit Index: {0}'.format(linear_fit9), xy=(1.225, 1), xytext=(1.225, 1), color='black', weight='semibold', fontsize=8)
-	plt.ylabel("1st Coefficient", fontsize=17)
+	plt.xlabel("$J-K$", fontsize=13)
 	
-	# xlim(.9, 2.5)
-	#xlim(-1.1, 1)
+	plt.scatter(JK, first, s=70, marker='o', c=categories, alpha=0.7, label=types)
+	plt.errorbar(JK, first, yerr=first_err, fmt=None, alpha=0.5, ecolor='k')
+	plt.ylim(-25, 0)
+	plt.xlim(.8,3)
+	plt.ylabel("$1^{st} Coefficient$", fontsize=17)
 	
-	#0th
+	''' 0TH '''
 	plt.subplot(325)
-	#plt.title("J-K deviation vs SpT")
-	plt.xlabel("J-K", fontsize=13)
-	plt.plot(JKr, zr, marker='o', linestyle='None', color=color, alpha=0.7, label='Red Non-Young')
-	plt.plot(JKy, zy, marker='o', linestyle='None', color='r', alpha=0.7, label='Red Young')
-	plt.plot(JKb, zb, marker='o', linestyle='None', color='b',alpha=0.7, label='Blue Non-Subdwarf')
-	plt.plot(JKf, zf, marker='*', linestyle='None', color='k',alpha=0.7, label='Field Gravity Objects')
-	# linear_fit10 = scipy.stats.pearsonr(JK_fit, zeroeth_coeff)
-	# plt.annotate('Linear Fit Index: {0}'.format(linear_fit10), xy=(1.225, 1), xytext=(1.225, 1), color='black', weight='semibold', fontsize=8)
-	plt.ylabel("0th Coefficient", fontsize=17)
-	plt.legend(loc=1, fontsize=10)
+	plt.xlabel("$J-K$", fontsize=13)
+	plt.ylabel("$0^{th} Coefficient$", fontsize=17)
 	
-	# xlim(.9, 2.5)
-	#xlim(0, 3.5)
+	plt.scatter(JK, zero, s=50, marker='o', c=categories, alpha=0.7, label=types)
+	plt.errorbar(JK, zero, yerr=zero_err, fmt=None, alpha=0.5, ecolor='k')
+	plt.ylim(0.65, 1.25)
+	plt.xlim(.8,3)
 	
-	
+	# Create fake data (void) to use the linestyles for the legend of the sigmas:
+	data1 = mlines.Line2D([], [], color='r', marker='o', label="Red", linestyle='')
+	data2 = mlines.Line2D([], [], color='m', marker='o', label="Young", linestyle='')
+	data3 = mlines.Line2D([], [], color='b', marker='o', label="Blue", linestyle='')
+	plt.legend((data1, data2, data3), ("Red", "Young", "Blue"), loc=1, numpoints=1)
 	plt.show()
 	
