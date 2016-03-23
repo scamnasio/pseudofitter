@@ -193,27 +193,30 @@ def MC(n):
 	figure.gca().annotate("MC Uncertainty Analysis of {0} Pyspeckit Fitting".format(name), xy=(0.5, 1.0), xycoords="figure fraction", xytext=(0, -5), textcoords="offset points", ha="center", va="top")
 	plt.savefig('/Users/saracamnasio/Research/Projects/UnusuallyRB/2016_Analysis/{0}/{0}_MCplot.png'.format(name), format='png')
 	print '{0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}, {10} '.format(name, mu4, sigma4, mu3, sigma3, mu2, sigma2, mu1, sigma1, mu0, sigma0)
+
 def fits(n, input):
+	from astropy.io import fits
 	'''
 	*n*
 		int - number of MC iterations
 	*input*
-		str - last bracke of obj spectra path (fits file)
+		str - full path of obj spectra path (fits file)
 
 	'''
-	image_file = "/Users/saracamnasio/Research/Data/mixed_newdata/{0}".format(input)	
-	hdu_list=fits.open(image_file)
+
+	hdu_list=fits.open(input)
 	
 	print hdu_list.info()
-	M = input("Enter index of spectrum data (e.g. 0,1,2...")
-	image_data=hdu_list[M].data
+	image_data=hdu_list[0].data
 	W1 = image_data[0]
 	F1 = image_data[1]
 	U1 = image_data[2]
 
 	
-	path_name = input.split('.')
-	name = path_name[0]
+	path_name = input.split('/')
+	name_1 = path_name[6]
+	name_2 = name_1.split('.')
+	name =  name_2[0]
 	
 
 	'''
