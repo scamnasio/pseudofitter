@@ -3,7 +3,6 @@ import astrotools2 as at
 from matplotlib import pyplot as plt
 from numpy import *
 import utilities as u
-from astrodbkit import astrodb
 import pyspeckit
 import StringIO
 import corner
