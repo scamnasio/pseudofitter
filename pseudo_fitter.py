@@ -23,7 +23,7 @@ def MC(n):
 	'''
 	
 	path_input = input("Enter last bracket of obj path:")
-	path = "/Users/saracamnasio/Research/Projects/UnusuallyRB/Source_Data/{0}".format(path_input)	
+	path = "/Users/saracamnasio/Desktop/Database_Data/Standards/{0}".format(path_input)	
 	# path = "/Users/saracamnasio/Research/Projects/UnusuallyRB/Source_Data/{0}".format(path_input)
 	path_name2 = path_input.split('.')
 	name = path_name2[0]
@@ -31,7 +31,7 @@ def MC(n):
 	
 	W1 = np.array(raw[:,0])
 	F1 = np.array(raw[:,1])
-	U1 = np.array(raw[:,2])
+	# U1 = np.array(raw[:,2])
 
 	'''
 	If Angstroms:
@@ -39,15 +39,16 @@ def MC(n):
 	# W1 = W1/10000
 
 	'''
-	- If U1 does not exist (data without uncertainty) please comment out line 42 ("U = np.array(raw[:,2])") and uncomment the first line below
+	- If U1 does not exist (data without uncertainty) please comment out line 34 ("U = np.array(raw[:,2])") and uncomment the first line below
 	- If U1 is SNR uncomment the second line
 	'''
 
-	# U1 = 0.05*F1
-	U1 = F1/U1
+	U1 = 0.05*F1
+	# U1 = F1/U1
 
 	# Trimming the data
-	W2,F2,U2 = [i[np.where(np.logical_and(W1>1.15, W1<1.325))] for i in [W1,F1,U1]]
+	W2,F2,U2 = [i[np.where(np.logical_and(W1>1.15, W1<2.291169))] for i in [W1,F1,U1]]
+	# 1.325
 	
 	W2[np.isnan(W2)] = 0
 	F2[np.isnan(F2)] = 0
@@ -206,7 +207,7 @@ def fits(n, input):
 
 	hdu_list=fits.open(input)
 	
-	print hdu_list.info()
+	# print hdu_list.info()
 	image_data=hdu_list[0].data
 	W1 = image_data[0]
 	F1 = image_data[1]
@@ -218,11 +219,12 @@ def fits(n, input):
 	name_2 = name_1.split('.')
 	name =  name_2[0]
 	
+	hdu_list.close()
 
 	'''
 	If Angstroms:
 	'''
-	W1 = W1/10000
+	# W1 = W1/10000
 
 	'''
 	- If U1 does not exist (data without uncertainty) please comment out line 42 ("U = np.array(raw[:,2])") and uncomment the first line below
@@ -234,13 +236,13 @@ def fits(n, input):
 
 	# Trimming the data
 	W2,F2,U2 = [i[np.where(np.logical_and(W1>1.15, W1<1.325))] for i in [W1,F1,U1]]
-	
+	print W2,F2,U2
 	W2[np.isnan(W2)] = 0
 	F2[np.isnan(F2)] = 0
 	U2[np.isnan(U2)] = 0
 
 	# Recombining the W,F into one array in order to normalize it
-	recombined = np.vstack([W2,F2,U2])
+	recombined = np.vstack([W2,F2, U2])
 	band = [1.15, 1.325]
 
 	# data_clean = u.scrub(recombined) 
@@ -260,16 +262,6 @@ def fits(n, input):
 	F = np.array(F)
 	U = np.squeeze(U3)
 	U = np.array(U)
-
-	
-
-	# SNR = input("SNR:")
-	# if SNR == "y":
-	# 	U = F/U
-	# elif SNR == "n/a":
-	# 	U = 0.05*F
-	# elif SNR == "n":
-	# 	U = U
 
 	# Check what the spectrum looks like:
 	plt.figure()
