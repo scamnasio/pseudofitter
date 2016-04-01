@@ -41,6 +41,8 @@ def fits():
 			categories.append("b")
 		elif n == "red":
 			categories.append("m")
+		elif n == "standard":
+			categories.append("k")
 
 	categories = np.array(categories)
 
@@ -174,9 +176,11 @@ def fits():
 	plt.xlim(.8,3)
 	
 	# Create fake data (void) to use the linestyles for the legend of the sigmas:
-	data1 = mlines.Line2D([], [], color='r', marker='o', label="Red", linestyle='')
-	data2 = mlines.Line2D([], [], color='m', marker='o', label="Young", linestyle='')
-	data3 = mlines.Line2D([], [], color='b', marker='o', label="Blue", linestyle='')
-	plt.legend((data1, data2, data3), ("Red", "Young", "Blue"), loc=1, numpoints=1)
+	data1 = mlines.Line2D([], [], color='r', marker='o', label="Red", linestyle='', markersize=9)
+	data2 = mlines.Line2D([], [], color='m', marker='o', label="Young", linestyle='', markersize=9)
+	data3 = mlines.Line2D([], [], color='b', marker='o', label="Blue", linestyle='', markersize=9)
+	data4 = mlines.Line2D([], [], color='k', marker='o', label="Field Gravity", linestyle='', markersize=9)
+
+	plt.legend((data1, data2, data4, data3), ("Red", "Young", "Field Gravity", "Blue"), loc=1, numpoints=1)
 	plt.show()
 	
