@@ -377,7 +377,7 @@ def fits(n, input):
 	plt.savefig('/Users/saracamnasio/Research/Projects/UnusuallyRB/2016_Analysis/{0}/{0}_MCplot.png'.format(name), format='png')
 	print '{0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}, {10}'.format(name, mu4, sigma4, mu3, sigma3, mu2, sigma2, mu1, sigma1, mu0, sigma0)
 
-def spt(n):
+def spt():
 	
 	'''
 	*n*
@@ -389,14 +389,18 @@ def spt(n):
 	# path_input3 = input("Enter last bracket of blue obj path:")
 
 	# young:
-	path1 = "/Users/saracamnasio/Desktop/Database_Data/0355+1133_SXD.txt"
+	path1 = input("Enter last bracket of first spt obj path:")
+	name1 = input("Enter name of 1st obj:")
 	#standard:
-	path2 = "/Users/saracamnasio/Desktop/Database_Data/Standards/1506+1321_1.txt"
+	path2 = input("Enter last bracket of second spt obj path:")
+	name2 = input("Enter name of 2nd obj:")
 	#blue:
-	path3 = "/Users/saracamnasio/Desktop/Database_Data/2M1300_corrected.txt"
+	path3 = input("Enter last bracket of third spt obj path:")
+	name3 = input("Enter name of 3rd obj:")
 
 	# path = "/Users/saracamnasio/Research/Projects/UnusuallyRB/Source_Data/{0}".format(path_input)
 
+	
 
 	raw1 = np.genfromtxt(path1, delimiter='', dtype = float)
 	raw2 = np.genfromtxt(path2, delimiter='', dtype = float)
@@ -535,9 +539,80 @@ def spt(n):
 
 	plt.ylabel('Normalized Flux F$_{\lambda}+C $')
 	plt.xlabel('Wavelength ($\mu$m) - $W_0$')
-	plt.annotate('0355+1133 (young)', xy=(0.11, 0.7), xytext=(0.11, 0.7), color='red', weight='semibold', fontsize=15)
-	plt.annotate('1506+1321 (field)', xy=(0.11, 1.7), xytext=(0.11, 1.7), color='grey', weight='semibold', fontsize=15)
-	plt.annotate('1300+1912 (blue)', xy=(0.11, 2.7), xytext=(0.11, 2.7), color='blue', weight='semibold', fontsize=15)
-	plt.annotate('L3', xy=(0.155, 0.3), xytext=(0.155, 0.3), color='black', weight='semibold', fontsize=40)
+	plt.annotate('{0}'.format(name1), xy=(0.11, 0.7), xytext=(0.11, 0.7), color='red', weight='semibold', fontsize=15)
+	plt.annotate('{0}'.format(name2), xy=(0.11, 1.7), xytext=(0.11, 1.7), color='grey', weight='semibold', fontsize=15)
+	plt.annotate('{0}'.format(name3), xy=(0.11, 2.7), xytext=(0.11, 2.7), color='blue', weight='semibold', fontsize=15)
+	plt.annotate('{0}'.format(title), xy=(0.155, 0.3), xytext=(0.155, 0.3), color='black', weight='semibold', fontsize=40)
 	plt.ylim(0.15,3.4)
+
+
+def color_seq():
+
+	
+	numbers = [0, .5, 1, 1.5, 2, 2.5, 3, 3.5, 4]
+	colors = [ 'yellow','orange', 'red','orange', 'yellow', 'orange', 'red', 'orange', 'yellow' ]
+	plt.figure()
+	plt.ylabel('Normalized Flux F$_{\lambda}+C $')
+	plt.xlabel('Wavelength ($\mu$m) - $W_0$')
+	plt.ylim(0.15,5)
+	plt.xlim(0,0.175)
+
+	for n,i in zip(numbers, colors):
+		print i
+		name = input("Enter the name of object: ")
+		spt = input("Enter the spt of object: ")
+		path = input("Enter last branch of data path: ")
+		color = input ("Enter color")
+		snr = input("SNR? y/n: ")
+		coeff4 = input("Enter coefficient 4:")
+		coeff3 = input("Enter coefficient 3:")
+		coeff2 = input("Enter coefficient 2:")
+		coeff1 = input("Enter coefficient 1:")
+		coeff0 = input("Enter coefficient 0:")
+
+		fullpath = "/Users/saracamnasio/Research/Projects/UnusuallyRB/Source_Data/{0}".format(path)
+		raw = np.genfromtxt(fullpath, delimiter='', dtype = float)
+		
+		W1 = np.array(raw[:,0])
+		F1 = np.array(raw[:,1])
+		U1 = np.array(raw[:,2])
+
+		# IF SNR:
+		if snr == 'y':
+			U1 = F1/U1
+		elif snr == 'n':
+			U1 = U1
+
+
+		# Trimming the data
+		W2,F2,U2 = [i[np.where(np.logical_and(W1>1.15, W1<1.325))] for i in [W1,F1,U1]]
+		
+		# 1.325
+		W2[np.isnan(W2)] = 0
+		F2[np.isnan(F2)] = 0
+		U2[np.isnan(U2)] = 0
+		
+		# Recombining the W,F into one array in order to normalize it
+		band = [1.15, 1.325]
+		recombined = np.vstack([W2,F2,U2])
+		data = np.array(at.norm_spec(recombined, band))
+		
+		W3 = data[:,0]
+		F3 = data[:,1]
+		U3 = data[:,2]
+		
+		W1 = np.squeeze(W3) 
+		W1[:] = [x - 1.15 for x in W1] #original was 1.15, 1.24 is to test Kraus idea  
+		F1 = np.squeeze(F3)
+		F1 = np.array(F1)
+		U1 = np.squeeze(U3)
+		U1 = np.array(U1)
+
+		x1 = linspace(0, 0.175, 200)
+		y1 = (coeff4*x1**4 - coeff3*x1**3 + coeff2*x1**2 - coeff1*x1 + coeff0 + n)
+		plt.errorbar(W1, F1+n, yerr=U1, color="black")
+		plt.annotate('{0}'.format(name), xy=(0.11, 0.7), xytext=(0.11, 0.7), color='black', weight='semibold', fontsize=15)
+		plt.plot(x1, y1, color=color, linewidth=2)
+		plt.xlim(0, 0.175)
+plt.show()
 	
