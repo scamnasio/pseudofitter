@@ -1,3 +1,9 @@
+''' 
+Written by Sara Camnasio
+CUNY Hunter College class of 2016
+sara.camnasio@gmail.com
+'''
+
 import numpy as np
 import astrotools2 as at
 from matplotlib import pyplot as plt
@@ -15,7 +21,6 @@ from astropy.io import fits
 # db = astrodb.get_db('/Users/saracamnasio/Dropbox/BDNYCdb/BDNYC.db')
 
 # data = np.genfromtxt("/Users/saracamnasio/Research/Projects/UnusuallyRB/Source_Data/2M2151+34.txt", delimiter='', dtype = float)
-# hi hello
 def MC(n):
 	'''
 	*n*
