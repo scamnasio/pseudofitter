@@ -221,4 +221,31 @@ def fits():
 
 	plt.legend((data1, data2, data3, data4, data5), ("Non-Young", "Young", "Standard", "Subdwarf", "UBL"), loc=3, frameon=False, bbox_to_anchor=(1.45, 0),  numpoints=1)
 	plt.show()
+
+	plt.figure()
+	plt.subplot(321)
+	pyplot.acorr(fourth)
+	plt.subplot(322)
+	pyplot.acorr(third)
+	plt.subplot(323)
+	pyplot.acorr(second)
+	plt.subplot(324)
+	pyplot.acorr(first)
+	plt.subplot(325)
+	pyplot.acorr(zero)
+
+	# plt.figure()
+	# plt.subplot(321)
+	# pyplot.acorr(spt)
+	# plt.subplot(322)
+	# pyplot.acorr(x)
+	# plt.subplot(323)
+	# pyplot.acorr(x)
+	# plt.subplot(324)
+	# pyplot.acorr(x)
+	# plt.subplot(325)
+	# pyplot.acorr(x)
+
+	plt.show()
+
 	
