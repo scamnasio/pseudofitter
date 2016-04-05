@@ -70,7 +70,7 @@ def fits():
 	''' 3rd '''
 	
 	P2 = plt.subplot(322)
-	plt.scatter(spt, third, s=70, marker='o', c=categories, alpha=0.7, label=types)
+	plt.scatter(spt, third, s=70, markeredgecolor='None', marker='o', c=categories, alpha=0.7, label=types)
 	par = np.poly1d(np.polyfit(spt, third, 1))
 	ys = par(spt)
 	plt.plot(spt, ys, color='green')
@@ -85,7 +85,7 @@ def fits():
 
 	P3 = plt.subplot(323)
 	plt.ylabel("$2^{nd} Coefficient$", fontsize=17)
-	plt.scatter(spt, second, s=70, marker='o', c=categories, alpha=0.7, label=types)
+	plt.scatter(spt, second, s=70, markeredgecolor='None', marker='o', c=categories, alpha=0.7, label=types)
 	par = np.poly1d(np.polyfit(spt, second, 1))
 	ys = par(spt)
 	plt.plot(spt, ys, color='green')
@@ -101,7 +101,7 @@ def fits():
 	#plt.title("J-K deviation vs SpT")
 	plt.xlabel("$Spectral Type$", fontsize=13)
 	plt.ylabel("$1^{st} Coefficient$", fontsize=17)
-	plt.scatter(spt, first, s=70, marker='o', c=categories, alpha=0.7, label=types)
+	plt.scatter(spt, first, s=70, markeredgecolor='None', marker='o', c=categories, alpha=0.7, label=types)
 	par = np.poly1d(np.polyfit(spt, first, 1))
 	ys = par(spt)
 	plt.plot(spt, ys, color='green')
@@ -115,7 +115,7 @@ def fits():
 	P5 = plt.subplot(325)
 	#plt.title("J-K deviation vs SpT")
 	plt.xlabel("$Spectral Type$", fontsize=13)
-	plt.scatter(spt, zero, s=70, marker='o', c=categories, alpha=0.7, label=types)
+	plt.scatter(spt, zero, s=70, markeredgecolor='None', marker='o', c=categories, alpha=0.7, label=types)
 	par = np.poly1d(np.polyfit(spt, zero, 1))
 	ys = par(spt)
 	plt.plot(spt, ys, color='green')
@@ -128,12 +128,12 @@ def fits():
 	# plt.legend(loc=1, fontsize=10)
 	
 	# Create fake data (void) to use the linestyles for the legend of the sigmas:
-	data1 = mlines.Line2D([], [], color='r', marker='o', label="Red", linestyle='', markersize=9)
-	data2 = mlines.Line2D([], [], color='m', marker='o', label="Young", linestyle='', markersize=9)
-	data3 = mlines.Line2D([], [], color='k', marker='o', label="Standard", linestyle='', markersize=9)
-	data4 = mlines.Line2D([], [], color='c', marker='o', label="Subdwarf", linestyle='', markersize=9)
-	data5 = mlines.Line2D([], [], color='b', marker='o', label="Blue", linestyle='', markersize=9)
-	plt.legend((data1, data2, data3, data4, data5), ("Red", "Young", "Standard", "Subdwarf", "Blue"), loc=3, bbox_to_anchor=(1.45, 0),  numpoints=1)
+	data1 = mlines.Line2D([], [], color='0.5', marker='o', markeredgecolor='None', elinewidth=2, label="Non-Young", linestyle='', markersize=10)
+	data2 = mlines.Line2D([], [], color='r', marker='^', markeredgecolor='None', elinewidth=2, label="Young", linestyle='', markersize=10)
+	data3 = mlines.Line2D([], [], color='k', marker='*', markeredgecolor='None', elinewidth=2, label="Standard", linestyle='', markersize=14)
+	data4 = mlines.Line2D([], [], color='b', marker='^', markeredgecolor='None', elinewidth=2, label="Subdwarf", linestyle='', markersize=10)
+	data5 = mlines.Line2D([], [], color='b', marker='o', markeredgecolor='None', elinewidth=2, label="UBL", linestyle='', markersize=10)
+	plt.legend((data1, data2, data3, data4, data5), ("Non-Young", "Young", "Standard", "Subdwarf", "UBL"), loc=3, bbox_to_anchor=(1.45, 0),  frameon=False, numpoints=1)
 	
 	plt.show()
 	
@@ -151,7 +151,7 @@ def fits():
 	plt.figure()
 	plt.subplot(321)
 	plt.ylabel("$4^{th} Coefficient$", fontsize=17)
-	plt.scatter(JK, fourth, s=70, marker='o', c=categories, alpha=0.7, label=types)
+	plt.scatter(JK, fourth, s=70, markeredgecolor='None', marker='o', c=categories, alpha=0.7, label=types)
 	par = np.poly1d(np.polyfit(JK, fourth, 1))
 	ys = par(JK)
 	plt.plot(JK, ys, color='green')
@@ -163,7 +163,7 @@ def fits():
 	
 	plt.subplot(322)
 	plt.ylabel("$3^{rd} Coefficient$", fontsize=17)
-	plt.scatter(JK, third, s=70, marker='o', c=categories, alpha=0.7, label=types)
+	plt.scatter(JK, third, s=70, markeredgecolor='None', marker='o', c=categories, alpha=0.7, label=types)
 	par = np.poly1d(np.polyfit(JK, third, 1))
 	ys = par(JK)
 	plt.plot(JK, ys, color='green')
@@ -174,7 +174,7 @@ def fits():
 	''' 2ND '''
 
 	plt.subplot(323)		
-	plt.scatter(JK, second, s=70, marker='o', c=categories, alpha=0.7, label=types)
+	plt.scatter(JK, second, s=70, markeredgecolor='None', marker='o', c=categories, alpha=0.7, label=types)
 	par = np.poly1d(np.polyfit(JK, second, 1))
 	ys = par(JK)
 	plt.plot(JK, ys, color='green')
@@ -188,7 +188,7 @@ def fits():
 	plt.subplot(324)
 	plt.xlabel("$J-K$", fontsize=13)
 	
-	plt.scatter(JK, first, s=70, marker='o', c=categories, alpha=0.7, label=types)
+	plt.scatter(JK, first, s=70, markeredgecolor='None', marker='o', c=categories, alpha=0.7, label=types)
 	par = np.poly1d(np.polyfit(JK, first, 1))
 	ys = par(JK)
 	plt.plot(JK, ys, color='green')
@@ -203,7 +203,7 @@ def fits():
 	plt.xlabel("$J-K$", fontsize=13)
 	plt.ylabel("$0^{th} Coefficient$", fontsize=17)
 	
-	plt.scatter(JK, zero, s=70, marker='o', c=categories, alpha=0.7, label=types)
+	plt.scatter(JK, zero, s=70, markeredgecolor='None', marker='o', c=categories, alpha=0.7, label=types)
 	par = np.poly1d(np.polyfit(JK, zero, 1))
 	ys = par(JK)
 	plt.plot(JK, ys, color='green')
@@ -212,13 +212,13 @@ def fits():
 	# plt.xlim(.8,3)
 	
 	# Create fake data (void) to use the linestyles for the legend of the sigmas:
-	data1 = mlines.Line2D([], [], color='r', marker='o', label="Red", linestyle='', markersize=9)
-	data2 = mlines.Line2D([], [], color='m', marker='o', label="Young", linestyle='', markersize=9)
-	data3 = mlines.Line2D([], [], color='k', marker='o', label="Standard", linestyle='', markersize=9)
-	data4 = mlines.Line2D([], [], color='c', marker='o', label="Subdwarf", linestyle='', markersize=9)
-	data5 = mlines.Line2D([], [], color='b', marker='o', label="Blue", linestyle='', markersize=9)
+	data1 = mlines.Line2D([], [], color='r', markeredgecolor='None', marker='o', label="Non-Young", linestyle='', markersize=9)
+	data2 = mlines.Line2D([], [], color='m', markeredgecolor='None', marker='o', label="Young", linestyle='', markersize=9)
+	data3 = mlines.Line2D([], [], color='k', markeredgecolor='None', marker='o', label="Standard", linestyle='', markersize=9)
+	data4 = mlines.Line2D([], [], color='c', markeredgecolor='None', marker='o', label="Subdwarf", linestyle='', markersize=9)
+	data5 = mlines.Line2D([], [], color='b', markeredgecolor='None', marker='o', label="UBL", linestyle='', markersize=9)
 	# data4 = mlines.Line2D([], [], color='k', marker='o', label="Field Gravity", linestyle='', markersize=9)
 
-	plt.legend((data1, data2, data3, data4, data5), ("Red", "Young", "Standard", "Subdwarf", "Blue"), loc=3, bbox_to_anchor=(1.45, 0),  numpoints=1)
+	plt.legend((data1, data2, data3, data4, data5), ("Non-Young", "Young", "Standard", "Subdwarf", "UBL"), loc=3, frameon=False, bbox_to_anchor=(1.45, 0),  numpoints=1)
 	plt.show()
 	
