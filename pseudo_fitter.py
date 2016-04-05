@@ -80,6 +80,7 @@ def MC(n):
 	F = np.array(F)
 	U = np.squeeze(U3)
 	U = np.array(U)
+	print len(W)
 
 	
 
