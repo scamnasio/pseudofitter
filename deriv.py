@@ -30,11 +30,20 @@ def derivative():
 	coeffs = np.column_stack((source[:,8], source[:,10], source[:,12], source[:,14], source[:,16]))
 	names = source_name[:,0]
 
+	spt = np.array(source[:,2])
+	types = np.array(source_name[:,4])
+	JK = np.array(source[:,7])
+
+
 	# Artificial wavelength array ---- DO I NEED TO USE THE REAL DATA HERE?
 	fake_data = np.arange(0, 0.176, 0.00001) # this last value is based on getting as close as possible to the resolution of med res data
 	IP = []
 	lmax = []
 	lmin = []
+
+	IP_names = []
+	lmax_names = []
+	lmin_names = []
 	# Loop through coefficients:
 	for n in range(len(coeffs)):
 		# Converting coefficient values into a polynomial form
@@ -65,6 +74,7 @@ def derivative():
 		inf_corr = [g+1.15 for g in inf_raw]
 		inf_corrected = np.array(inf_corr)
 		IP.append(inf_corrected)
+		IP_names.append(names[n])
 		
 
 		# This is the base plot to show where the loop finds min and max
@@ -110,28 +120,86 @@ def derivative():
 			y = p3(x)
 			# Differentiating between loc max and loc min:
 			if y > 0:
-				print "Local minimum is {0}".format(y)
+				# print "Local minimum is {0}".format(y)
+				lmin_names.append(names[n])
 				lmin.append(y)
 			elif y < 0:
-				print "Local maximum is {0}".format(y)
+				# print "Local maximum is {0}".format(y)
 				lmax.append(y)
+				lmax_names.append(names[n])
 	
+
+	''' NEED TO WORK ON PLOTTING BELOW
 	lmin = np.array(lmin)
 	lmax = np.array(lmax)
-	IP = np.array(IP)		
-	print len(IP)
-	print np.size(IP)
-	print len(lmax)
-	print np.size(lmax)
-	print len(lmin)
-	print np.size(lmin)
+	IP = np.array(IP)	
+	print lmax	
+	print len(IP[:,0])
+	print np.size(IP[:,0])
+	print len(lmax[:,0])
+	print np.size(lmax[:,0])
+	print len(lmin[:,0])
+	print np.size(lmin[:,0])
+	print len(IP_names)
+	print np.size(IP_names)
+	print len(lmin_names)
+	print np.size(lmin_names)
+	print len(lmax_names)
+	print np.size(lmax_names)
+
+	print "IP are: {0}".format(IP[:,0])
+	print "lmin are: {0}".format(lmin[:,0])
+	print "lmax are: {0}".format(lmax[:,0])
+
+	print "IP names are: {0}".format(IP_names)
+	print "lmin names are: {0}".format(lmin_names)
+	print "lmax names are: {0}".format(lmax_names)
+
+	plt.figure()
+	plt.subplot(221)
+	plt.scatter(spt, lmin)
+	plt.xlabel("Spectral Type")
+	plt.ylabel("Local mininimum")
+
+	plt.subplot(222)
+	plt.scatter(spt, lmax)
+	plt.xlabel("Spectral Type")
+	plt.ylabel("Local maximum")
+
+	plt.subplot(223)
+	plt.scatter(spt, IP)
+	plt.xlabel("Spectral Type")
+	plt.ylabel("Inflection point")
+
+	plt.figure()
+	plt.subplot(221)
+	plt.scatter(JK, lmin)
+	plt.xlabel("Spectral Type")
+	plt.ylabel("Local mininimum")
+
+	plt.subplot(222)
+	plt.scatter(JK, lmax)
+	plt.xlabel("Spectral Type")
+	plt.ylabel("Local maximum")
+
+	plt.subplot(223)
+	plt.scatter(JK, IP)
+	plt.xlabel("Spectral Type")
+	plt.ylabel("Inflection point")
 
 
-	print "IP are: {0}".format(IP)
-	print "lmin are: {0}".format(lmin)
-	print "lmax are: {0}".format(lmax)
+
+	print "IP are: {0}".format(IP[0])
+	print "lmin are: {0}".format(lmin[0])
+	print "lmax are: {0}".format(lmax[0])
+
+	print "IP names are: {0}".format(IP_names)
+	print "lmin names are: {0}".format(lmin_names)
+	print "lmax names are: {0}".format(lmax_names)
 
 	# np.savetxt()
 
 	# to use when saving plotting result or plotting table:
 	#date_format = time.strftime("%d/%m/%Y")
+
+	'''
