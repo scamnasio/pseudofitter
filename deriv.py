@@ -31,78 +31,107 @@ def derivative():
 	names = source_name[:,0]
 
 	# Artificial wavelength array ---- DO I NEED TO USE THE REAL DATA HERE?
-	fake_data = np.arange(0, 0.176, 0.0001) # this last value is based on getting as close as possible to the resolution of med res data
-
+	fake_data = np.arange(0, 0.176, 0.00001) # this last value is based on getting as close as possible to the resolution of med res data
+	IP = []
+	lmax = []
+	lmin = []
 	# Loop through coefficients:
 	for n in range(len(coeffs)):
 		# Converting coefficient values into a polynomial form
 		poly = coeffs[n]
 		p = np.poly1d(poly)
 		poly_fit = p(fake_data)
-		# plt.plot(fake_data, poly_fit)
+		# plt.plot(new_fake_data, poly_fit)
 
 		# Calculating first derivative
 		p2 = np.polyder(p, m=1)
 		first_der = p2(fake_data)
 		first_der = np.array(first_der)
-		# plt.plot(fake_data, first_der)
+		# plt.plot(new_fake_data, first_der)
 
 		# Calculating second derivative
 		p3 = np.polyder(p, m=2)
 		second_der = p3(fake_data)
-		second_der = np.array(second_der)
-		# plt.plot(fake_data, second_der)
+		
 
-		# Calculating the roots (or critical values of wavelength where min/max are)
+		# Calculating the roots (or critical values of wavelength where min/max are) & inflection points:
 		minmax_raw = p2.r
-		# print "Minmaxraw is:{0}".format(minmax_raw)
-		minmax_corrected = [s+1.15 for s in minmax_raw]
-		minmax_corrected = np.array(minmax_corrected)
-		# print "Minmax_Corrected is:{0}".format(minmax_corrected)
+		inf_raw = p3.r
+		# print "inflection points are: {0}".format(inf_raw)
+		
+		minmax_corr = [s+1.15 for s in minmax_raw]
+		minmax_corrected = np.array(minmax_corr)
+		
+		inf_corr = [g+1.15 for g in inf_raw]
+		inf_corrected = np.array(inf_corr)
+		IP.append(inf_corrected)
+		
 
 		# This is the base plot to show where the loop finds min and max
 		new_fake_data = [c+1.15 for c in fake_data]
-		# plt.figure()
-		plt.xlim(1.15, 1.325)
-		plt.ylim(0, 1.4)
-		plt.plot(new_fake_data, poly_fit, color ='grey', alpha = 0.5)
-		plt.scatter(minmax_corrected, p(minmax_raw), color = 'red', alpha = 0.8)
-		plt.title("{0} Local max/min".format(names[n]))
+		
+		''' Figures for testing '''
+
+		### Plot of poly fit + min/max:
+		# plt.xlim(1.15, 1.325)
+		# plt.ylim(0, 1.4)
+		# plt.plot(new_fake_data, poly_fit, color ='grey', alpha = 0.5) #poly fit
+		# plt.scatter(minmax_corrected, p(minmax_raw), color = 'red', alpha = 0.8) 
+		# plt.title("Min/max points on polynomial fit")
+		# plt.grid()
+
+		### Plot of poly fit + inf points:
+		# plt.xlim(1.15, 1.325)
+		# plt.ylim(0, 1.4)
+		# plt.plot(new_fake_data, poly_fit, color ='grey', alpha = 0.5) #poly fit
+		# plt.scatter(inf_corrected, p(inf_raw), color = 'red', alpha = 0.8) # inf points on poly fit
+		# plt.title("Inflection points on polynomial fit")
+		# plt.grid()
+
+		### Plot of second deriv
+		# plt.xlim(1.15, 1.325)
+		# plt.plot(new_fake_data, second_der, color ='grey', alpha = 0.5) # second derivative of poly fit
+		# plt.title("Second derivative of polynomial fit")
+		# plt.grid()
+		
+		### Inf points on second derivative:
+		# plt.xlim(1.15, 1.325)
+		# plt.plot(new_fake_data, second_der, color ='grey', alpha = 0.5)
+		# plt.scatter(inf_corrected, p3(inf_raw), color = 'red', alpha = 0.8) # inf points on second derivative
+		# plt.title("Inflection points on second derivative of polynomial fit")
+		# plt.grid()
+
+		
 
 		# For each root, do second derivative test to figure out loc max or loc min:
-		for i in range(len(minmax_corrected)):
-			# Add 1.15 to the whole array of wavelength roots to correct for the subtraction performed in pseudo_fitter when finding a fit
-			x = minmax_corrected[i]
-			print "x is: {0}".format(x)
-			# print "P3 is: {0}".format(p3)
-
+		for i in range(len(minmax_raw)):
+			x = minmax_raw[i]
 			# Plug in critical values into the second deriv.
 			y = p3(x)
-			print "p3 is: {0}".format(p3)
-			print "y is: {0}".format(y)
 			# Differentiating between loc max and loc min:
 			if y > 0:
 				print "Local minimum is {0}".format(y)
+				lmin.append(y)
 			elif y < 0:
 				print "Local maximum is {0}".format(y)
-			
-		
-		# Artificial wavelength array ---- DO I NEED TO USE THE REAL DATA HERE?
-		wavelength = np.arange(1.15, 1.326, 0.0001) # this last value is based on getting as close as possible to the resolution of med res data
-		
-		final = []
-		# For each element in the fictional array, find inflection points by finding where the second deriv is equal to zero:
-		for element in wavelength:
-			# plugging in a fictional arrays of x that matches resolution and range of analysis data 
-			m = p3(element)
-			flux = final.append(m)
-			if m == 0:
-				print "There is an inflection point at: {0}".format(element)
-			else: 
-				continue
-		# plt.figure()
-		# plt.plot(wavelength, final, color='k')
-	 	# np.savetxt()
+				lmax.append(y)
+	
+	lmin = np.array(lmin)
+	lmax = np.array(lmax)
+	IP = np.array(IP)		
+	print len(IP)
+	print np.size(IP)
+	print len(lmax)
+	print np.size(lmax)
+	print len(lmin)
+	print np.size(lmin)
+
+
+	print "IP are: {0}".format(IP)
+	print "lmin are: {0}".format(lmin)
+	print "lmax are: {0}".format(lmax)
+
+	# np.savetxt()
 
 	# to use when saving plotting result or plotting table:
 	#date_format = time.strftime("%d/%m/%Y")
