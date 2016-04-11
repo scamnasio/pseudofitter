@@ -15,6 +15,7 @@ Current to do list 04/04/2016:
 import numpy as np
 import time
 from matplotlib import pyplot as plt
+import matplotlib.lines as mlines
 
 def derivative():
 
@@ -40,7 +41,8 @@ def derivative():
 
 
 	# Artificial wavelength array ---- DO I NEED TO USE THE REAL DATA HERE?
-	fake_data = np.arange(0, 0.176, 0.00001) # this last value is based on getting as close as possible to the resolution of med res data
+	fake_data = np.arange(0, 0.35, 0.00001) # this last value is based on getting as close as possible to the resolution of med res data 
+	# for above, original spectral wavelength range is 0, 0.176 but I am using 0.35 in order to see later points 
 	IP = []
 	lmax = []
 	lmin = []
@@ -102,7 +104,8 @@ def derivative():
 		''' Figures for testing '''
 
 		### Plot of poly fit + min/max:
-		# plt.xlim(1.15, 1.325)
+		# plt.xlim(1.15, 1.5)
+		# plt.axvline(x=1.325, color = 'k', linestyle='dashed')
 		# plt.ylim(0, 1.4)
 		# plt.plot(new_fake_data, poly_fit, color ='grey', alpha = 0.5) #poly fit
 		# plt.scatter(minmax_corrected, p(minmax_raw), color = 'red', alpha = 0.8) 
@@ -135,7 +138,7 @@ def derivative():
 		# For each root, do second derivative test to figure out loc max or loc min:
 		for i in range(len(minmax_raw)):
 			x = minmax_raw[i]
-			print x
+			# print x
 			# Plug in critical values into the second deriv.
 			y = p3(x)
 			# Differentiating between loc max and loc min:
@@ -146,11 +149,8 @@ def derivative():
 				lmin.append(x)
 				lmin_spt.append(spt[n])
 				lmin_JK.append(JK[n])
-				# print "value is: {0}".format(lmin)
-				# print "name is: {0}".format(lmin_names)
 
 			elif y < 0:
-				# print "Local maximum is {0}".format(x)
 				lmax.append(x)
 				lmax_types.append(types[n])
 				lmax_names.append(names[n])
@@ -158,78 +158,134 @@ def derivative():
 				lmax_JK.append(JK[n])
 	
 	
-	categories = []
-	shapes = []
-	for n in zip(lmin_types, lmin_types, IP_types):
+	categories_lmin = []
+	categories_lmax = []
+	categories_IP = []
+	shapes_lmin = []
+	shapes_lmax = []
+	shapes_IP= []
+	
+	arrays = [lmin_types, lmax_types, IP_types]
+	categories = [categories_lmin, categories_lmax, categories_IP]
+	shapes = [shapes_lmin, shapes_lmax, shapes_IP]
 
-		if n == 'young':
-			categories.append("r")
-			shapes.append()
-		elif n == "blue":
-			categories.append("b")
-			shapes.append()
-		elif n == "red":
-			categories.append("r")
-			shapes.append()
-		elif n == "standard":
-			categories.append("k")
-			shapes.append()
-		elif n == "subdwarf":
-			categories.append("b")
-			shapes.append()
+	for n, m, k in zip(arrays, categories, shapes):
+		for i in n:
+			if i == 'young':
+				m.append("r")
+				k.append("^")
+			elif i == "blue":
+				m.append("b")
+				k.append("o")
+			elif i == "red":
+				m.append("r")
+				k.append("o")
+			elif i == "standard":
+				m.append("k")
+				k.append("*")
+			elif i == "subdwarf":
+				m.append("b")
+				k.append("^")
+			elif i == "field":
+				m.append("green")
+				k.append("o")
 
 
 	lmin = np.real(np.array(lmin))
 	lmin = [o+1.15 for o in lmin]
-	# print np.size(lmin)
-	# print lmin
-	lmin_all = np.column_stack((lmin, lmin_names, lmin_types, lmin_spt, lmin_JK))
+	lmin_all = np.column_stack((lmin, lmin_names, lmin_types, lmin_spt, lmin_JK, categories_lmin, shapes_lmin))
 	# print lmin_all
+
 
 	lmax = np.real(np.array(lmax))
 	lmax = [o+1.15 for o in lmax]
 	lmax_all = np.column_stack((lmax, lmax_names, lmax_types, lmax_spt, lmax_JK))
 
 	IP = np.real(np.array(IP))
-	IP = IP[:,0]
-	IP = [o+1.15 for o in IP]
+	IP = IP[:,1]
+	# IP = [o+1.15 for o in IP]
 	IP_all = np.column_stack((IP, IP_names, IP_types, IP_spt, IP_JK))
 
 
-	# NEED TO WORK ON PLOTTING BELOW
-	
+	data1 = mlines.Line2D([], [], color='r', marker='o', markeredgecolor='None', label="Non-Young", linestyle='', markersize=10)
+	data2 = mlines.Line2D([], [], color='r', marker='^', markeredgecolor='None', label="Young", linestyle='', markersize=10)
+	data3 = mlines.Line2D([], [], color='k', marker='*', markeredgecolor='None', label="Standard", linestyle='', markersize=14)
+	data4 = mlines.Line2D([], [], color='b', marker='^', markeredgecolor='None', label="Subdwarf", linestyle='', markersize=10)
+	data5 = mlines.Line2D([], [], color='b', marker='o', markeredgecolor='None', label="UBL", linestyle='', markersize=10)
 
 	plt.figure()
-	plt.subplot(221)
-	plt.scatter(lmin_all[:,3], lmin_all[:, 0])
-	plt.xlabel("Spectral Type")
-	plt.ylabel("Local mininimum")
+	for n,i,x,l in zip(lmin_all[:,3], lmin_all[:,0], categories_lmin, shapes_lmin):
+		P1 = plt.subplot(221)
+		plt.scatter(n, i, alpha = 0.7, s=60, c=x, marker=l)
+		plt.xlabel("Spectral Type")
+		plt.ylabel("$1^{st}$ Local Mininimum ($\lambda$)")
+		plt.xticks(np.arange(9,20,1))
+		labels = ['','L0','L1','L2','L3','L4','L5','L6','L7','L8','L9']
+		P1.set_xticklabels(labels)
+		plt.ylim(1.14,1.2)
 
-	plt.subplot(222)
-	plt.scatter(lmax_all[:,3], lmax_all[:, 0])
-	plt.xlabel("Spectral Type")
-	plt.ylabel("Local maximum")
+	for n,i,x,l in zip(lmin_all[:,3], lmin_all[:,0], categories_lmin, shapes_lmin):
+		P1 = plt.subplot(222)
+		plt.scatter(n, i, alpha = 0.7, s=60, c=x, marker=l)
+		plt.xlabel("Spectral Type")
+		plt.ylabel("$2^{nd}$ Local Mininimum ($\lambda$)")
+		plt.xticks(np.arange(9,20,1))
+		labels = ['','L0','L1','L2','L3','L4','L5','L6','L7','L8','L9']
+		P1.set_xticklabels(labels)
+		plt.ylim(1.27,1.48)
 
-	plt.subplot(223)
-	plt.scatter(IP_all[:,3], IP_all[:, 0])
-	plt.xlabel("Spectral Type")
-	plt.ylabel("Inflection point")
+	for n,i,x,l in zip(lmax_all[:,3], lmax_all[:,0], categories_lmax, shapes_lmax):
+		P2 = plt.subplot(223)
+		plt.scatter(n, i, alpha = 0.7, s=60, c=x, marker=l)
+		plt.xlabel("Spectral Type")
+		plt.ylabel("Local Maximum ($\lambda$)")
+		plt.xticks(np.arange(9,20,1))
+		labels = ['','L0','L1','L2','L3','L4','L5','L6','L7','L8','L9']
+		P2.set_xticklabels(labels)
+		plt.ylim(1.27, 1.31)
+
+	for n,i,x,l in zip(IP_all[:,3], IP_all[:,0], categories_IP, shapes_IP):
+		P3 = plt.subplot(224)
+		plt.scatter(n, i, alpha = 0.7, s=60, c= x, marker=l)
+		plt.xlabel("Spectral Type")
+		plt.ylabel("Inflection Point ($\lambda$)")
+		plt.xticks(np.arange(9,20,1))
+		labels = ['','L0','L1','L2','L3','L4','L5','L6','L7','L8','L9']
+		P3.set_xticklabels(labels)
+		plt.ylim(1.2,1.25)
+
+	plt.legend((data1, data2, data3, data4, data5), ("Non-Young", "Young", "Standard", "Subdwarf", "UBL"), loc=3, bbox_to_anchor=(1.45, 0),  frameon=False, numpoints=1)
 
 	plt.figure()
-	plt.subplot(221)
-	plt.scatter(lmin_all[:,4], lmin_all[:,0])
-	plt.xlabel("J-K Color")
-	plt.ylabel("Local mininimum")
+	for n,i,x,l in zip(lmin_all[:,4], lmin_all[:,0], categories_lmin, shapes_lmin):
+		plt.subplot(221)
+		plt.scatter(n, i, alpha = 0.7, s=60, c= x, marker=l)
+		plt.xlabel("$J-K_{s}$ Color")
+		plt.ylabel("$1^{st}$ Local Mininimum ($\lambda$)")
+		plt.ylim(1.14,1.2)
 
-	plt.subplot(222)
-	plt.scatter(lmax_all[:,4], lmax_all[:,0])
-	plt.xlabel("J-K Color")
-	plt.ylabel("Local maximum")
+	for n,i,x,l in zip(lmin_all[:,4], lmin_all[:,0], categories_lmin, shapes_lmin):
+		plt.subplot(222)
+		plt.scatter(n, i, alpha = 0.7, s=60, c= x, marker=l)
+		plt.xlabel("$J-K_{s}$ Color")
+		plt.ylabel("$2^{nd}$ Local Mininimum ($\lambda$)")
+		plt.ylim(1.27,1.48)
 
-	plt.subplot(223)
-	plt.scatter(IP_all[:,4], IP_all[:,0])
-	plt.xlabel("J-K Color")
-	plt.ylabel("Inflection point")
+	for n,i,x,l in zip(lmax_all[:,4], lmax_all[:,0], categories_lmax, shapes_lmax):
+		plt.subplot(223)
+		plt.scatter(n, i, alpha = 0.7, s=60, c= x, marker=l)
+		plt.xlabel("$J-K_{s}$ Color")
+		plt.ylabel("Local Maximum ($\lambda$)")
+		plt.ylim(1.27, 1.31)
+
+	for n,i,x,l in zip(IP_all[:,4], IP_all[:,0], categories_IP, shapes_IP):
+		plt.subplot(224)
+		plt.scatter(n, i, alpha = 0.7, s=60, c= x, marker=l)
+		plt.xlabel("J-K Color")
+		plt.ylabel("Inflection Point ($\lambda$)")
+		plt.ylim(1.2,1.25)
+
+	plt.legend((data1, data2, data3, data4, data5), ("Non-Young", "Young", "Standard", "Subdwarf", "UBL"), loc=3, bbox_to_anchor=(1.45, 0),  frameon=False, numpoints=1)
 
 
 	# np.savetxt()
