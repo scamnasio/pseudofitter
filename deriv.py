@@ -21,18 +21,22 @@ def derivative():
 	''' This function outputs local max, min, and inflection points in terms of wavelength '''
 
 	# Grabbing the coefficients from the analysis results table
-	source = np.genfromtxt('/Users/saracamnasio/Desktop/Master_Sheet.csv',delimiter=',', skip_header=1, dtype = float)
+	source = np.genfromtxt('/Users/saracamnasio/Desktop/Master_Sheet.csv',delimiter=',', skip_header=1, dtype = str)
 
 	# Importing the names from the same table, same order, just as strings
-	source_name = np.genfromtxt('/Users/saracamnasio/Desktop/Master_Sheet.csv',delimiter=',', skip_header=1, dtype = str)
+	# source_name = np.genfromtxt('/Users/saracamnasio/Desktop/Master_Sheet.csv',delimiter=',', skip_header=1, dtype = str)
 
 	# Grabbing only the coefficients from the table
 	coeffs = np.column_stack((source[:,8], source[:,10], source[:,12], source[:,14], source[:,16]))
-	names = source_name[:,0]
+	coeffs = coeffs.astype(np.float)
+	names = source[:,0]
+	
 
 	spt = np.array(source[:,2])
-	types = np.array(source_name[:,4])
+	spt = spt.astype(np.float)
+	types = np.array(source[:,4])
 	JK = np.array(source[:,7])
+	JK = JK.astype(np.float)
 
 
 	# Artificial wavelength array ---- DO I NEED TO USE THE REAL DATA HERE?
@@ -42,8 +46,20 @@ def derivative():
 	lmin = []
 
 	IP_names = []
+	IP_types = []
+	IP_spt = []
+	IP_JK = []
+	
 	lmax_names = []
+	lmax_spt = []
+	lmax_types = []
+	lmax_JK = []
+	
 	lmin_names = []
+	lmin_spt = []
+	lmin_types = []
+	lmin_JK = []
+
 	# Loop through coefficients:
 	for n in range(len(coeffs)):
 		# Converting coefficient values into a polynomial form
@@ -75,7 +91,10 @@ def derivative():
 		inf_corrected = np.array(inf_corr)
 		IP.append(inf_corrected)
 		IP_names.append(names[n])
-		
+		IP_types.append(types[n])
+		IP_spt.append(spt[n])
+		IP_JK.append(JK[n])
+
 
 		# This is the base plot to show where the loop finds min and max
 		new_fake_data = [c+1.15 for c in fake_data]
@@ -116,90 +135,105 @@ def derivative():
 		# For each root, do second derivative test to figure out loc max or loc min:
 		for i in range(len(minmax_raw)):
 			x = minmax_raw[i]
+			print x
 			# Plug in critical values into the second deriv.
 			y = p3(x)
 			# Differentiating between loc max and loc min:
 			if y > 0:
-				# print "Local minimum is {0}".format(y)
+				# print "Local minimum is {0}".format(x)
 				lmin_names.append(names[n])
-				lmin.append(y)
+				lmin_types.append(types[n])
+				lmin.append(x)
+				lmin_spt.append(spt[n])
+				lmin_JK.append(JK[n])
+				# print "value is: {0}".format(lmin)
+				# print "name is: {0}".format(lmin_names)
+
 			elif y < 0:
-				# print "Local maximum is {0}".format(y)
-				lmax.append(y)
+				# print "Local maximum is {0}".format(x)
+				lmax.append(x)
+				lmax_types.append(types[n])
 				lmax_names.append(names[n])
+				lmax_spt.append(spt[n])
+				lmax_JK.append(JK[n])
+	
+	
+	categories = []
+	shapes = []
+	for n in zip(lmin_types, lmin_types, IP_types):
+
+		if n == 'young':
+			categories.append("r")
+			shapes.append()
+		elif n == "blue":
+			categories.append("b")
+			shapes.append()
+		elif n == "red":
+			categories.append("r")
+			shapes.append()
+		elif n == "standard":
+			categories.append("k")
+			shapes.append()
+		elif n == "subdwarf":
+			categories.append("b")
+			shapes.append()
+
+
+	lmin = np.real(np.array(lmin))
+	lmin = [o+1.15 for o in lmin]
+	# print np.size(lmin)
+	# print lmin
+	lmin_all = np.column_stack((lmin, lmin_names, lmin_types, lmin_spt, lmin_JK))
+	# print lmin_all
+
+	lmax = np.real(np.array(lmax))
+	lmax = [o+1.15 for o in lmax]
+	lmax_all = np.column_stack((lmax, lmax_names, lmax_types, lmax_spt, lmax_JK))
+
+	IP = np.real(np.array(IP))
+	IP = IP[:,0]
+	IP = [o+1.15 for o in IP]
+	IP_all = np.column_stack((IP, IP_names, IP_types, IP_spt, IP_JK))
+
+
+	# NEED TO WORK ON PLOTTING BELOW
 	
 
-	''' NEED TO WORK ON PLOTTING BELOW
-	lmin = np.array(lmin)
-	lmax = np.array(lmax)
-	IP = np.array(IP)	
-	print lmax	
-	print len(IP[:,0])
-	print np.size(IP[:,0])
-	print len(lmax[:,0])
-	print np.size(lmax[:,0])
-	print len(lmin[:,0])
-	print np.size(lmin[:,0])
-	print len(IP_names)
-	print np.size(IP_names)
-	print len(lmin_names)
-	print np.size(lmin_names)
-	print len(lmax_names)
-	print np.size(lmax_names)
-
-	print "IP are: {0}".format(IP[:,0])
-	print "lmin are: {0}".format(lmin[:,0])
-	print "lmax are: {0}".format(lmax[:,0])
-
-	print "IP names are: {0}".format(IP_names)
-	print "lmin names are: {0}".format(lmin_names)
-	print "lmax names are: {0}".format(lmax_names)
-
 	plt.figure()
 	plt.subplot(221)
-	plt.scatter(spt, lmin)
+	plt.scatter(lmin_all[:,3], lmin_all[:, 0])
 	plt.xlabel("Spectral Type")
 	plt.ylabel("Local mininimum")
 
 	plt.subplot(222)
-	plt.scatter(spt, lmax)
+	plt.scatter(lmax_all[:,3], lmax_all[:, 0])
 	plt.xlabel("Spectral Type")
 	plt.ylabel("Local maximum")
 
 	plt.subplot(223)
-	plt.scatter(spt, IP)
+	plt.scatter(IP_all[:,3], IP_all[:, 0])
 	plt.xlabel("Spectral Type")
 	plt.ylabel("Inflection point")
 
 	plt.figure()
 	plt.subplot(221)
-	plt.scatter(JK, lmin)
-	plt.xlabel("Spectral Type")
+	plt.scatter(lmin_all[:,4], lmin_all[:,0])
+	plt.xlabel("J-K Color")
 	plt.ylabel("Local mininimum")
 
 	plt.subplot(222)
-	plt.scatter(JK, lmax)
-	plt.xlabel("Spectral Type")
+	plt.scatter(lmax_all[:,4], lmax_all[:,0])
+	plt.xlabel("J-K Color")
 	plt.ylabel("Local maximum")
 
 	plt.subplot(223)
-	plt.scatter(JK, IP)
-	plt.xlabel("Spectral Type")
+	plt.scatter(IP_all[:,4], IP_all[:,0])
+	plt.xlabel("J-K Color")
 	plt.ylabel("Inflection point")
 
-
-
-	print "IP are: {0}".format(IP[0])
-	print "lmin are: {0}".format(lmin[0])
-	print "lmax are: {0}".format(lmax[0])
-
-	print "IP names are: {0}".format(IP_names)
-	print "lmin names are: {0}".format(lmin_names)
-	print "lmax names are: {0}".format(lmax_names)
 
 	# np.savetxt()
 
 	# to use when saving plotting result or plotting table:
 	#date_format = time.strftime("%d/%m/%Y")
 
-	'''

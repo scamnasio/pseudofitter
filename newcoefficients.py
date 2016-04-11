@@ -19,7 +19,7 @@ source2 = np.genfromtxt('/Users/saracamnasio/Desktop/Master_Sheet.csv',delimiter
 
 name = np.array(source2[:,0])
 spt = np.array(source[:,2])
-types = np.array(source2[:,4])
+types = np.array(source2[:,4]) 
 JK = np.array(source[:,7])
 fourth = np.array(source[:,8])
 fourth_err = np.array(source[:,9])
@@ -36,17 +36,23 @@ JK_err = np.array(source[:,18])
 def fits():
 
 	categories = []
+	shapes = []
 	for n in types:
 		if n == 'young':
 			categories.append("r")
+			shapes.append()
 		elif n == "blue":
 			categories.append("b")
+			shapes.append()
 		elif n == "red":
 			categories.append("r")
+			shapes.append()
 		elif n == "standard":
 			categories.append("k")
+			shapes.append()
 		elif n == "subdwarf":
 			categories.append("b")
+			shapes.append()
 
 	categories = np.array(categories)
 
@@ -60,7 +66,7 @@ def fits():
 	par = np.poly1d(np.polyfit(spt, fourth, 1))
 	ys = par(spt)
 	plt.plot(spt, ys, color='green')
-	plt.errorbar(spt, fourth, elinewidth=2, markeredgecolor='None', xerr=0.5, yerr=fourth_err, fmt=None, alpha=0.5, ecolor='k')
+	plt.errorbar(spt, fourth, elinewidth=2, color= ,markeredgecolor='None', xerr=0.5, yerr=fourth_err, fmt=None, alpha=0.5, ecolor='k')
 	plt.xlim(9,20)
 	plt.ylim(-100,10500)
 	plt.xticks(np.arange(9,20,1))
