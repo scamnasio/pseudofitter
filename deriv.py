@@ -104,15 +104,16 @@ def derivative():
 		''' Figures for testing '''
 
 		### Plot of poly fit + min/max:
-		# plt.xlim(1.15, 1.5)
-		# plt.axvline(x=1.325, color = 'k', linestyle='dashed')
-		# plt.ylim(0, 1.4)
-		# plt.plot(new_fake_data, poly_fit, color ='grey', alpha = 0.5) #poly fit
-		# plt.scatter(minmax_corrected, p(minmax_raw), color = 'red', alpha = 0.8) 
-		# plt.title("Min/max points on polynomial fit")
-		# plt.grid()
+		plt.xlim(1.15, 1.5)
+		plt.axvline(x=1.325, color = 'k', linestyle='dashed')
+		plt.ylim(0, 1.4)
+		plt.plot(new_fake_data, poly_fit, color ='grey', alpha = 0.5) #poly fit
+		plt.scatter(minmax_corrected, p(minmax_raw), color = 'red', alpha = 0.8) 
+		plt.title("Min/max points on polynomial fit")
+		plt.grid()
 
 		### Plot of poly fit + inf points:
+		
 		# plt.xlim(1.15, 1.325)
 		# plt.ylim(0, 1.4)
 		# plt.plot(new_fake_data, poly_fit, color ='grey', alpha = 0.5) #poly fit
@@ -121,12 +122,14 @@ def derivative():
 		# plt.grid()
 
 		### Plot of second deriv
+		
 		# plt.xlim(1.15, 1.325)
 		# plt.plot(new_fake_data, second_der, color ='grey', alpha = 0.5) # second derivative of poly fit
 		# plt.title("Second derivative of polynomial fit")
 		# plt.grid()
 		
 		### Inf points on second derivative:
+		
 		# plt.xlim(1.15, 1.325)
 		# plt.plot(new_fake_data, second_der, color ='grey', alpha = 0.5)
 		# plt.scatter(inf_corrected, p3(inf_raw), color = 'red', alpha = 0.8) # inf points on second derivative
@@ -207,16 +210,16 @@ def derivative():
 	IP_all = np.column_stack((IP, IP_names, IP_types, IP_spt, IP_JK))
 
 
-	data1 = mlines.Line2D([], [], color='r', marker='o', markeredgecolor='None', label="Non-Young", linestyle='', markersize=10)
-	data2 = mlines.Line2D([], [], color='r', marker='^', markeredgecolor='None', label="Young", linestyle='', markersize=10)
-	data3 = mlines.Line2D([], [], color='k', marker='*', markeredgecolor='None', label="Standard", linestyle='', markersize=14)
-	data4 = mlines.Line2D([], [], color='b', marker='^', markeredgecolor='None', label="Subdwarf", linestyle='', markersize=10)
-	data5 = mlines.Line2D([], [], color='b', marker='o', markeredgecolor='None', label="UBL", linestyle='', markersize=10)
+	data1 = mlines.Line2D([], [], color='r', marker='o', label="Non-Young", linestyle='', markersize=8)
+	data2 = mlines.Line2D([], [], color='r', marker='^', label="Young", linestyle='', markersize=8)
+	data3 = mlines.Line2D([], [], color='k', marker='*', label="Standard", linestyle='', markersize=12)
+	data4 = mlines.Line2D([], [], color='b', marker='^', label="Subdwarf", linestyle='', markersize=8)
+	data5 = mlines.Line2D([], [], color='b', marker='o', label="Non-Subdwarf", linestyle='', markersize=8)
 
 	plt.figure()
 	for n,i,x,l in zip(lmin_all[:,3], lmin_all[:,0], categories_lmin, shapes_lmin):
 		P1 = plt.subplot(221)
-		plt.scatter(n, i, alpha = 0.7, s=60, c=x, marker=l)
+		plt.scatter(n, i, alpha = 0.7, s=80, c=x, marker=l)
 		plt.xlabel("Spectral Type")
 		plt.ylabel("$1^{st}$ Local Mininimum ($\lambda$)")
 		plt.xticks(np.arange(9,20,1))
@@ -226,7 +229,7 @@ def derivative():
 
 	for n,i,x,l in zip(lmin_all[:,3], lmin_all[:,0], categories_lmin, shapes_lmin):
 		P1 = plt.subplot(222)
-		plt.scatter(n, i, alpha = 0.7, s=60, c=x, marker=l)
+		plt.scatter(n, i, alpha = 0.7, s=80, c=x, marker=l)
 		plt.xlabel("Spectral Type")
 		plt.ylabel("$2^{nd}$ Local Mininimum ($\lambda$)")
 		plt.xticks(np.arange(9,20,1))
@@ -236,7 +239,7 @@ def derivative():
 
 	for n,i,x,l in zip(lmax_all[:,3], lmax_all[:,0], categories_lmax, shapes_lmax):
 		P2 = plt.subplot(223)
-		plt.scatter(n, i, alpha = 0.7, s=60, c=x, marker=l)
+		plt.scatter(n, i, alpha = 0.7, s=80, c=x, marker=l)
 		plt.xlabel("Spectral Type")
 		plt.ylabel("Local Maximum ($\lambda$)")
 		plt.xticks(np.arange(9,20,1))
@@ -246,7 +249,7 @@ def derivative():
 
 	for n,i,x,l in zip(IP_all[:,3], IP_all[:,0], categories_IP, shapes_IP):
 		P3 = plt.subplot(224)
-		plt.scatter(n, i, alpha = 0.7, s=60, c= x, marker=l)
+		plt.scatter(n, i, alpha = 0.7, s=80, c= x, marker=l)
 		plt.xlabel("Spectral Type")
 		plt.ylabel("Inflection Point ($\lambda$)")
 		plt.xticks(np.arange(9,20,1))
@@ -254,38 +257,38 @@ def derivative():
 		P3.set_xticklabels(labels)
 		plt.ylim(1.2,1.25)
 
-	plt.legend((data1, data2, data3, data4, data5), ("Non-Young", "Young", "Standard", "Subdwarf", "UBL"), loc=3, bbox_to_anchor=(1.45, 0),  frameon=False, numpoints=1)
+	plt.legend((data1, data2, data3, data4, data5), ("Non-Young", "Young", "Standard", "Subdwarf", "Non-Subdwarf"), fontsize= 13,  loc=1,  numpoints=1)
 
 	plt.figure()
 	for n,i,x,l in zip(lmin_all[:,4], lmin_all[:,0], categories_lmin, shapes_lmin):
 		plt.subplot(221)
-		plt.scatter(n, i, alpha = 0.7, s=60, c= x, marker=l)
+		plt.scatter(n, i, alpha = 0.7, s=80, c= x, marker=l)
 		plt.xlabel("$J-K_{s}$ Color")
 		plt.ylabel("$1^{st}$ Local Mininimum ($\lambda$)")
 		plt.ylim(1.14,1.2)
 
 	for n,i,x,l in zip(lmin_all[:,4], lmin_all[:,0], categories_lmin, shapes_lmin):
 		plt.subplot(222)
-		plt.scatter(n, i, alpha = 0.7, s=60, c= x, marker=l)
+		plt.scatter(n, i, alpha = 0.7, s=80, c= x, marker=l)
 		plt.xlabel("$J-K_{s}$ Color")
 		plt.ylabel("$2^{nd}$ Local Mininimum ($\lambda$)")
 		plt.ylim(1.27,1.48)
 
 	for n,i,x,l in zip(lmax_all[:,4], lmax_all[:,0], categories_lmax, shapes_lmax):
 		plt.subplot(223)
-		plt.scatter(n, i, alpha = 0.7, s=60, c= x, marker=l)
+		plt.scatter(n, i, alpha = 0.7, s=80, c= x, marker=l)
 		plt.xlabel("$J-K_{s}$ Color")
 		plt.ylabel("Local Maximum ($\lambda$)")
 		plt.ylim(1.27, 1.31)
 
 	for n,i,x,l in zip(IP_all[:,4], IP_all[:,0], categories_IP, shapes_IP):
 		plt.subplot(224)
-		plt.scatter(n, i, alpha = 0.7, s=60, c= x, marker=l)
+		plt.scatter(n, i, alpha = 0.7, s=80, c= x, marker=l)
 		plt.xlabel("J-K Color")
 		plt.ylabel("Inflection Point ($\lambda$)")
 		plt.ylim(1.2,1.25)
 
-	plt.legend((data1, data2, data3, data4, data5), ("Non-Young", "Young", "Standard", "Subdwarf", "UBL"), loc=3, bbox_to_anchor=(1.45, 0),  frameon=False, numpoints=1)
+	plt.legend((data1, data2, data3, data4, data5), ("Non-Young", "Young", "Standard", "Subdwarf", "Non-Subdwarf"), fontsize= 13 ,loc=1, numpoints=1)
 
 
 	# np.savetxt()
