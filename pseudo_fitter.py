@@ -26,13 +26,7 @@ def MC(n):
 	*n*
 		int - number of MC iterations
 	'''
-	
-	'''
 
-	HIHFREOUAHGBREWBOREATPREBGOVBR
-	GRUOWEGHUBUWARBIPGBE
-
-	'''
 	path_input = input("Enter last bracket of obj path:")
 	path = "/Users/saracamnasio/Desktop/New_data/{0}".format(path_input)	
 	# path = "/Users/saracamnasio/Research/Projects/UnusuallyRB/Source_Data/{0}".format(path_input)
