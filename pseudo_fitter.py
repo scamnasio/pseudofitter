@@ -63,9 +63,6 @@ def MC(n):
 	recombined = np.vstack([W2,F2,U2])
 	band = [1.15, 1.325]
 
-	# data_clean = u.scrub(recombined) 
-	# had to remove SCRUB because it fucked up baseline
-
 	data_clean = recombined
 	data = np.array(at.norm_spec(data_clean, band))
 
@@ -102,7 +99,6 @@ def MC(n):
 	
 	# Loading the W,F and U into a spectrum 
 	medres = pyspeckit.Spectrum(xarr=W, data=F, error=U)
-	# medres.xarr.unit = 'micron'
 	medres.xarr.xtype ='wavelength'
 	medres2 = medres.copy()
 
@@ -114,9 +110,6 @@ def MC(n):
 
 	for i in range(n):
 		medres2.data = medres.data + np.random.randn(medres.data.size)*medres.error
-		# medres2.plotter(xmin=0, xmax=0.175, ymin=0.15, ymax=1.4, errstyle='bars', color='grey')
-		# plt.ylabel('Flux F$_{\lambda}$')
-		# plt.xlabel('Wavelength ($\mu$m) - $W_0$')
 		medres2.baseline(xmin=0, xmax=0.175, ymin=0.15, ymax=1.4, subtract=False, highlight_fitregion=False, selectregion=True, exclude=[0.017129, 0.0317135, 0.088683, 0.107725], order=4)
 		coeffs = medres2.baseline.baselinepars
 		C0 = coeffs[4]
@@ -184,9 +177,6 @@ def MC(n):
 	plt.ylabel('Probability')
 	plt.xlabel('Coefficient value')
 	plt.savefig('/Users/saracamnasio/Research/Projects/UnusuallyRB/2016_Analysis/{0}/{0}_hist_4th.png'.format(name), format='png')
-	
-	# print mu1, sigma1
-	# print mu2, sigma2
  
 	coeff0 = np.array(coeff0)
 	coeff1 = np.array(coeff1)
@@ -212,8 +202,6 @@ def fits(n, input):
 	'''
 
 	hdu_list=fits.open(input)
-	
-	# print hdu_list.info()
 	image_data=hdu_list[0].data
 	W1 = image_data[0]
 	F1 = image_data[1]
@@ -251,9 +239,6 @@ def fits(n, input):
 	recombined = np.vstack([W2,F2, U2])
 	band = [1.15, 1.325]
 
-	# data_clean = u.scrub(recombined) 
-	# had to remove SCRUB because it fucked up baseline
-
 	data_clean = recombined
 	data = np.array(at.norm_spec(data_clean, band))
 
@@ -279,7 +264,6 @@ def fits(n, input):
 	
 	# Loading the W,F and U into a spectrum 
 	medres = pyspeckit.Spectrum(xarr=W, data=F, error=U)
-	# medres.xarr.unit = 'micron'
 	medres.xarr.xtype ='wavelength'
 	medres2 = medres.copy()
 
@@ -291,9 +275,6 @@ def fits(n, input):
 
 	for i in range(n):
 		medres2.data = medres.data + np.random.randn(medres.data.size)*medres.error
-		# medres2.plotter(xmin=0, xmax=0.175, ymin=0.15, ymax=1.4, errstyle='bars', color='grey')
-		# plt.ylabel('Flux F$_{\lambda}$')
-		# plt.xlabel('Wavelength ($\mu$m) - $W_0$')
 		medres2.baseline(xmin=0, xmax=0.175, ymin=0.15, ymax=1.4, subtract=False, highlight_fitregion=False, selectregion=True, exclude=[0.017129, 0.0317135, 0.088683, 0.107725], order=4)
 		coeffs = medres2.baseline.baselinepars
 		C0 = coeffs[4]
