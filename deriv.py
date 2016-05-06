@@ -3,13 +3,8 @@ Written by Sara Camnasio
 CUNY Hunter College class of 2016
 sara.camnasio@gmail.com
 
-Current to do list 04/04/2016:
-- FIXED (It doesn't): I am pretty sure poly1d rounds up coefficients. Need to fix that
-- Add second derivative test for min max
-- Local maximum is defined when the first derivative (p2) is equal to 0 and the second derivative at p2 (f''(p2)) is less than 0
-- Local minimum is defined when the first derivative (p2) is equal to 0 and the second derivative at p2 (f''(p2)) is more than 0
-- An inflection point is the x value when the second derivative is equal to 0
-- DONE --- Add 1.15 to results to get original wavelength 
+Current to do list 04/20/2016:
+- Add uncertainties 
 '''
 
 import numpy as np
