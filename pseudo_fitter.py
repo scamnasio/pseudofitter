@@ -102,26 +102,89 @@ def MC(n):
 	medres.xarr.xtype ='wavelength'
 	medres2 = medres.copy()
 
-	coeff0 = []
-	coeff1 = []
-	coeff2 = []
-	coeff3 = []
-	coeff4 = []
+	# coeff0 = []
+	# coeff1 = []
+	# coeff2 = []
+	# coeff3 = []
+	# coeff4 = []
+
+	IP = []
+	lmax = []
+	lmin = []
+
+	IP_names = []
+	IP_types = []
+	IP_spt = []
+	IP_JK = []
+	
+	lmax_names = []
+	lmax_spt = []
+	lmax_types = []
+	lmax_JK = []
+	
+	lmin_names = []
+	lmin_spt = []
+	lmin_types = []
+	lmin_JK = []
 
 	for i in range(n):
 		medres2.data = medres.data + np.random.randn(medres.data.size)*medres.error
 		medres2.baseline(xmin=0, xmax=0.175, ymin=0.15, ymax=1.4, subtract=False, highlight_fitregion=False, selectregion=True, exclude=[0.017129, 0.0317135, 0.088683, 0.107725], order=4)
 		coeffs = medres2.baseline.baselinepars
+		
+		#PLEASE ADJUST CODE, n BELOW IS NOT LOOPING CORRECTLY YET. NEED TO ENCLOSE THIS CODE INTO LOOP THROUGH OBJECTS 
+		poly = coeffs[n]
+		p = np.poly1d(poly)
+
+		p2 = np.polyder(p, m=1)
+		first_der = p2(W)
+		first_der = np.array(first_der)
+
+		p3 = np.polyder(p, m=2)
+		second_der = p3(W)
+
+		minmax_raw = p2.r
+		inf_raw = p3.r
+
+		minmax_corr = [s+1.15 for s in minmax_raw]
+		minmax_corrected = np.array(minmax_corr)
+		
+		inf_corr = [g+1.15 for g in inf_raw]
+		inf_corrected = np.array(inf_corr)
+		IP.append(inf_corrected)
+		IP_names.append(names[n])
+		IP_types.append(types[n])
+		IP_spt.append(spt[n])
+		IP_JK.append(JK[n])
+
 		C0 = coeffs[4]
 		C1 = coeffs[3]
 		C2 = coeffs[2]
 		C3 = coeffs[1]
 		C4 = coeffs[0]
-		coeff0.append(C0)
-		coeff1.append(C1)
-		coeff2.append(C2)
-		coeff3.append(C3)
-		coeff4.append(C4)
+
+
+		for i in range(len(minmax_raw)):
+			x = minmax_raw[i]
+			# print x
+			# Plug in critical values into the second deriv.
+			y = p3(x)
+			# Differentiating between loc max and loc min:
+			if y > 0:
+				# print "Local minimum is {0}".format(x)
+				lmin_names.append(names[n])
+				lmin_types.append(types[n])
+				lmin.append(x)
+				lmin_spt.append(spt[n])
+				lmin_JK.append(JK[n])
+
+			elif y < 0:
+				lmax.append(x)
+				lmax_types.append(types[n])
+				lmax_names.append(names[n])
+				lmax_spt.append(spt[n])
+				lmax_JK.append(JK[n])
+
 		# print C0
 		new_flux = medres2.baseline.basespec
 		plt.plot(W, new_flux, color='red', alpha=0.4)
