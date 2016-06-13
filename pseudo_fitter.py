@@ -55,6 +55,7 @@ def MC(n):
 	W2,F2,U2 = [i[np.where(np.logical_and(W1>1.15, W1<1.325))] for i in [W1,F1,U1]]
 	# 1.325
 	
+	# Removing NaN's:
 	W2[np.isnan(W2)] = 0
 	F2[np.isnan(F2)] = 0
 	U2[np.isnan(U2)] = 0
@@ -63,58 +64,43 @@ def MC(n):
 	recombined = np.vstack([W2,F2,U2])
 	band = [1.15, 1.325]
 
+	# Normalizing over *** ENTIRE BAND *** :
 	data_clean = recombined
 	data = np.array(at.norm_spec(data_clean, band))
 
+	# Assigning arrays after normalization:
 	W3 = data[:,0]
 	F3 = data[:,1]
 	U3 = data[:,2]
 	
-	# Squeezing into one dimension and shifting the wavelength to the 0 axis
+	# Finalizing arrays:
 	W = np.squeeze(W3) 
-	W[:] = [x - 1.15 for x in W] #original was 1.15, 1.24 is to test Kraus idea  
 	F = np.squeeze(F3)
 	F = np.array(F)
 	U = np.squeeze(U3)
 	U = np.array(U)
-	print len(W)
-
-	
-
-	# SNR = input("SNR:")
-	# if SNR == "y":
-	# 	U = F/U
-	# elif SNR == "n/a":
-	# 	U = 0.05*F
-	# elif SNR == "n":
-	# 	U = U
 
 	# Check what the spectrum looks like:
 	plt.figure()
 	plt.errorbar(W, F, yerr=U, color='black') 
 	plt.ylabel('Normalized Flux F$_{\lambda}$')
 	plt.xlabel('Wavelength ($\mu$m) - $W_0$')
-	plt.annotate('{0}'.format(name), xy=(0.11, 0.7), xytext=(0.11, 0.7), color='black', weight='semibold', fontsize=15)
-	plt.ylim(0.15,1.4)
+	plt.annotate('{0}'.format(name), xy=(1.26, 0.7), xytext=(1.26, 0.7), color='black', weight='semibold', fontsize=15)
+	plt.ylim(1.26,1.4)
 	
 	# Loading the W,F and U into a spectrum 
 	medres = pyspeckit.Spectrum(xarr=W, data=F, error=U)
 	medres.xarr.xtype ='wavelength'
 	medres2 = medres.copy()
 
-	# coeff0 = []
-	# coeff1 = []
-	# coeff2 = []
-	# coeff3 = []
-	# coeff4 = []
+	# Creating empty arrays for all the values in output:
+	IP = [] ''' Inflection Point '''
+	lmax = [] ''' Local Maximum '''
+	lmin = [] ''' Local minimum '''
 
-	IP = []
-	lmax = []
-	lmin = []
-
-	IP_names = []
-	IP_types = []
-	IP_spt = []
+	IP_names = [] 
+	IP_types = [] 
+	IP_spt = [] 
 	IP_JK = []
 	
 	lmax_names = []
@@ -129,7 +115,7 @@ def MC(n):
 
 	for i in range(n):
 		medres2.data = medres.data + np.random.randn(medres.data.size)*medres.error
-		medres2.baseline(xmin=0, xmax=0.175, ymin=0.15, ymax=1.4, subtract=False, highlight_fitregion=False, selectregion=True, exclude=[0.017129, 0.0317135, 0.088683, 0.107725], order=4)
+		medres2.baseline(xmin=1.15, xmax=1.325, ymin=0.15, ymax=1.4, subtract=False, highlight_fitregion=False, selectregion=True, exclude=[1.167129, 1.1817135, 1.238683, 1.257725], order=4)
 		coeffs = medres2.baseline.baselinepars
 		
 		#PLEASE ADJUST CODE, n BELOW IS NOT LOOPING CORRECTLY YET. NEED TO ENCLOSE THIS CODE INTO LOOP THROUGH OBJECTS 
@@ -146,10 +132,8 @@ def MC(n):
 		minmax_raw = p2.r
 		inf_raw = p3.r
 
-		minmax_corr = [s+1.15 for s in minmax_raw]
 		minmax_corrected = np.array(minmax_corr)
 		
-		inf_corr = [g+1.15 for g in inf_raw]
 		inf_corrected = np.array(inf_corr)
 		IP.append(inf_corrected)
 		IP_names.append(names[n])
@@ -250,7 +234,7 @@ def MC(n):
 	coeff_MC = np.vstack([coeff0, coeff1, coeff2, coeff3, coeff4])
 	coeff_MC2 =  np.transpose(coeff_MC)
 	figure = corner.corner(coeff_MC2, labels=[r"$0th Coefficient$", r"$1st Coefficient$", r"$2nd Coefficient$", r"$3rd Coefficient$", r"$4th Coefficient$"], quantiles=[0.16, 0.5, 0.84], plot_contours=True, label_args={'fontsize':15}, color='black')
-	figure.gca().annotate("MC Uncertainty Analysis of {0} Pyspeckit Fitting".format(name), xy=(0.5, 1.0), xycoords="figure fraction", xytext=(0, -5), textcoords="offset points", ha="center", va="top")
+	figure.gca().annotate("MC Uncertainty Analysis of {0} Pyspeckit Fitting".format(name), xy=(1.2, 1.0), xycoords="figure fraction", xytext=(0, -5), textcoords="offset points", ha="center", va="top")
 	plt.savefig('/Users/saracamnasio/Research/Projects/UnusuallyRB/2016_Analysis/{0}/{0}_MCplot.png'.format(name), format='png')
 	print '{0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}, {10} '.format(name, mu4, sigma4, mu3, sigma3, mu2, sigma2, mu1, sigma1, mu0, sigma0)
 
