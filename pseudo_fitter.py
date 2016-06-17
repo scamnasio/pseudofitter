@@ -31,8 +31,6 @@ def MC(kind):
 	data_paths = source[1]
 	names = source[0]
 	
-	'''TO DO -- ADD LOOP HERE and import each path from table into text'''
-	
 	
 	for n in range(len(data_paths)):
 		if kind == "err":
@@ -96,6 +94,11 @@ def MC(kind):
 		plt.xlabel('Wavelength ($\mu$m) - $W_0$')
 		plt.annotate('{0}'.format(name), xy=(1.26, 0.7), xytext=(1.26, 0.7), color='black', weight='semibold', fontsize=15)
 		plt.ylim(1.26,1.4)
+		if not os.path.exists('/Users/saracamnasio/Research/Projects/UnusuallyRB/2016_Analysis/New_fits_June16/{0}'.format(name)):
+			os.makedirs('/Users/saracamnasio/Research/Projects/UnusuallyRB/2016_Analysis/New_fits_June16/{0}'.format(name))
+		plt.savefig('/Users/saracamnasio/Research/Projects/UnusuallyRB/2016_Analysis/New_fits_June16/{0}/{0}_plot.png'.format(name), format='png')
+		plt.savefig('/Users/saracamnasio/Research/Projects/UnusuallyRB/2016_Analysis/New_fits_June16/{0}/{0}_plot.pdf'.format(name), format='pdf')
+		plt.clf()
 		
 		# Loading the W,F and U into a spectrum 
 		medres = pyspeckit.Spectrum(xarr=W, data=F, error=U)
@@ -106,7 +109,13 @@ def MC(kind):
 		IP = [] ''' Inflection Point '''
 		lmax = [] ''' Local Maximum '''
 		lmin = [] ''' Local minimum '''
-	
+		
+		coeff0 = []
+		coeff1 = []
+		coeff2 = []
+		coeff3 = []
+		coeff4 = []
+
 		IP_names = [] 
 		IP_types = [] 
 		IP_spt = [] 
@@ -126,8 +135,7 @@ def MC(kind):
 			medres2.data = medres.data + np.random.randn(medres.data.size)*medres.error
 			medres2.baseline(xmin=1.15, xmax=1.325, ymin=0.15, ymax=1.4, subtract=False, highlight_fitregion=False, selectregion=True, exclude=[1.167129, 1.1817135, 1.238683, 1.257725], order=4)
 			coeffs = medres2.baseline.baselinepars
-			
-			#PLEASE ADJUST CODE, n BELOW IS NOT LOOPING CORRECTLY YET. NEED TO ENCLOSE THIS CODE INTO LOOP THROUGH OBJECTS 
+			 
 			poly = coeffs[n]
 			p = np.poly1d(poly)
 	
@@ -178,16 +186,15 @@ def MC(kind):
 					lmax_spt.append(spt[n])
 					lmax_JK.append(JK[n])
 	
-			# print C0
+	''' need to add mu and sigma for critical points '''
+			
 			new_flux = medres2.baseline.basespec
 			plt.plot(W, new_flux, color='red', alpha=0.4)
 			
-		if not os.path.exists('/Users/saracamnasio/Research/Projects/UnusuallyRB/2016_Analysis/{0}'.format(name)):
-			os.makedirs('/Users/saracamnasio/Research/Projects/UnusuallyRB/2016_Analysis/{0}'.format(name))
-	
+		
 		# This provides the black base spectrum to be overplotted with the red fits in the line above, leave here!
 		plt.plot(W, F, color='black')
-		plt.savefig('/Users/saracamnasio/Research/Projects/UnusuallyRB/2016_Analysis/{0}/{0}_specfit.png'.format(name), format='png')
+		# plt.savefig('/Users/saracamnasio/Research/Projects/UnusuallyRB/2016_Analysis/New_fits_June16/{0}/{0}_specfit.png'.format(name), format='png')
 		
 		# This calculates mean and standard deviation for all of the coefficients 
 		mu0,sigma0 = norm.fit(coeff0)
@@ -202,7 +209,7 @@ def MC(kind):
 		plt.title("Coefficient 0")
 		plt.ylabel('Probability')
 		plt.xlabel('Coefficient value')
-		plt.savefig('/Users/saracamnasio/Research/Projects/UnusuallyRB/2016_Analysis/{0}/{0}_hist_0th.png'.format(name), format='png')
+		# plt.savefig('/Users/saracamnasio/Research/Projects/UnusuallyRB/2016_Analysis/New_fits_June16/{0}/{0}_hist_0th.png'.format(name), format='png')
 	
 	
 		plt.figure()
@@ -210,21 +217,21 @@ def MC(kind):
 		plt.title("Coefficient 1")
 		plt.ylabel('Probability')
 		plt.xlabel('Coefficient value')
-		plt.savefig('/Users/saracamnasio/Research/Projects/UnusuallyRB/2016_Analysis/{0}/{0}_hist_1st.png'.format(name), format='png')
+		# plt.savefig('/Users/saracamnasio/Research/Projects/UnusuallyRB/2016_Analysis/New_fits_June16/{0}/{0}_hist_1st.png'.format(name), format='png')
 	
 		plt.figure()
 		plt.hist(coeff2, 10, normed=True, facecolor='orange', histtype='stepfilled')
 		plt.title("Coefficient 2")
 		plt.ylabel('Probability')
 		plt.xlabel('Coefficient value')
-		plt.savefig('/Users/saracamnasio/Research/Projects/UnusuallyRB/2016_Analysis/{0}/{0}_hist_2nd.png'.format(name), format='png')
+		# plt.savefig('/Users/saracamnasio/Research/Projects/UnusuallyRB/2016_Analysis/New_fits_June16/{0}/{0}_hist_2nd.png'.format(name), format='png')
 		
 		plt.figure()
 		plt.hist(coeff3, 10, normed=True, facecolor='orange', histtype='stepfilled') 
 		plt.title("Coefficient 3")
 		plt.ylabel('Probability')
 		plt.xlabel('Coefficient value')
-		plt.savefig('/Users/saracamnasio/Research/Projects/UnusuallyRB/2016_Analysis/{0}/{0}_hist_3rd.png'.format(name), format='png')
+		# plt.savefig('/Users/saracamnasio/Research/Projects/UnusuallyRB/2016_Analysis/New_fits_June16/{0}/{0}_hist_3rd.png'.format(name), format='png')
 	
 	
 		plt.figure()
@@ -232,7 +239,7 @@ def MC(kind):
 		plt.title("Coefficient 4")
 		plt.ylabel('Probability')
 		plt.xlabel('Coefficient value')
-		plt.savefig('/Users/saracamnasio/Research/Projects/UnusuallyRB/2016_Analysis/{0}/{0}_hist_4th.png'.format(name), format='png')
+		# plt.savefig('/Users/saracamnasio/Research/Projects/UnusuallyRB/2016_Analysis/New_fits_June16/{0}/{0}_hist_4th.png'.format(name), format='png')
  	
 		coeff0 = np.array(coeff0)
 		coeff1 = np.array(coeff1)
@@ -242,10 +249,14 @@ def MC(kind):
 		
 		coeff_MC = np.vstack([coeff0, coeff1, coeff2, coeff3, coeff4])
 		coeff_MC2 =  np.transpose(coeff_MC)
+
 		figure = corner.corner(coeff_MC2, labels=[r"$0th Coefficient$", r"$1st Coefficient$", r"$2nd Coefficient$", r"$3rd Coefficient$", r"$4th Coefficient$"], quantiles=[0.16, 0.5, 0.84], plot_contours=True, label_args={'fontsize':15}, color='black')
 		figure.gca().annotate("MC Uncertainty Analysis of {0} Pyspeckit Fitting".format(name), xy=(1.2, 1.0), xycoords="figure fraction", xytext=(0, -5), textcoords="offset points", ha="center", va="top")
-		plt.savefig('/Users/saracamnasio/Research/Projects/UnusuallyRB/2016_Analysis/{0}/{0}_MCplot.png'.format(name), format='png')
+		# plt.savefig('/Users/saracamnasio/Research/Projects/UnusuallyRB/2016_Analysis/New_fits_June16/{0}/{0}_MCplot.png'.format(name), format='png')
 		print '{0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}, {10} '.format(name, mu4, sigma4, mu3, sigma3, mu2, sigma2, mu1, sigma1, mu0, sigma0)
+		new_array = np.vstack([W, F, U])
+		new_array = np.transpose(new_array)
+		# np.savetxt('/Users/saracamnasio/Research/Projects/UnusuallyRB/2016_Analysis/New_fits_June16/{0}/{0}_unc_arrays'.format(name), new_array)
 
 def fits(n, input):
 	from astropy.io import fits
