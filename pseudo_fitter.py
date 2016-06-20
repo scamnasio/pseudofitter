@@ -21,42 +21,46 @@ from astropy.io import fits
 # db = astrodb.get_db('/Users/saracamnasio/Dropbox/BDNYCdb/BDNYC.db')
 
 # data = np.genfromtxt("/Users/saracamnasio/Research/Projects/UnusuallyRB/Source_Data/2M2151+34.txt", delimiter='', dtype = float)
-def MC(kind):
+def MC():
 	'''
 	*n*
 		int - number of MC iterations
 	'''
 	path = "/Users/saracamnasio/Dropbox/DATA/Master_data.csv"
 	source = np.genfromtxt(path, delimiter=',', dtype = str)
-	data_paths = source[1]
-	names = source[0]
+	data_paths = source[:,1]
+	names = source[:,0]
 	
 	
 	for n in range(len(data_paths)):
-		if kind == "err":
+		if source[n,2] == "err":
 			name = names[n]
 			data = data_paths[n]
-			spectrum = np.genfromtxt(path, delimiter=',', dtype = float)
+			spectrum = np.genfromtxt(data, delimiter=',', dtype = float)
 			W1 = np.array(spectrum[:,0])
 			F1 = np.array(spectrum[:,1])
 			U1 = np.array(spectrum[:,2])
+			print W1, F1 ,U1
 			
-		elif kind == "no":
+		elif source[n,2] == "no":
 			name = "{0}_estim_unc".format(names[n])
 			data = (data_paths[n])
-			spectrum = np.genfromtxt(path, delimiter=',', dtype = float)
+			spectrum = np.genfromtxt(data, delimiter=',', dtype = float)
 			W1 = np.array(spectrum[:,0])
 			F1 = np.array(spectrum[:,1])
 			U1 = F1 * 0.05
 
-		elif kind == "snr":
+		elif source[n,2] == "snr":
 			name = names[n]
 			data = (data_paths[n])
-			spectrum = np.genfromtxt(path, delimiter=',', dtype = float)
+			spectrum = np.genfromtxt(data, delimiter=',', dtype = float)
 			W1 = np.array(spectrum[:,0])
 			F1 = np.array(spectrum[:,1])
 			U_RAW = np.array(spectrum[:,2])
 			U1 = F/U_RAW
+
+		else:
+			pass
 	
 		# Trimming the data
 		W2,F2,U2 = [i[np.where(np.logical_and(W1>1.15, W1<1.325))] for i in [W1,F1,U1]]
@@ -94,11 +98,11 @@ def MC(kind):
 		plt.xlabel('Wavelength ($\mu$m) - $W_0$')
 		plt.annotate('{0}'.format(name), xy=(1.26, 0.7), xytext=(1.26, 0.7), color='black', weight='semibold', fontsize=15)
 		plt.ylim(1.26,1.4)
-		if not os.path.exists('/Users/saracamnasio/Research/Projects/UnusuallyRB/2016_Analysis/New_fits_June16/{0}'.format(name)):
-			os.makedirs('/Users/saracamnasio/Research/Projects/UnusuallyRB/2016_Analysis/New_fits_June16/{0}'.format(name))
-		plt.savefig('/Users/saracamnasio/Research/Projects/UnusuallyRB/2016_Analysis/New_fits_June16/{0}/{0}_plot.png'.format(name), format='png')
-		plt.savefig('/Users/saracamnasio/Research/Projects/UnusuallyRB/2016_Analysis/New_fits_June16/{0}/{0}_plot.pdf'.format(name), format='pdf')
-		plt.clf()
+		# if not os.path.exists('/Users/saracamnasio/Research/Projects/UnusuallyRB/2016_Analysis/New_fits_June16/{0}'.format(name)):
+			# os.makedirs('/Users/saracamnasio/Research/Projects/UnusuallyRB/2016_Analysis/New_fits_June16/{0}'.format(name))
+		# plt.savefig('/Users/saracamnasio/Research/Projects/UnusuallyRB/2016_Analysis/New_fits_June16/{0}/{0}_plot.png'.format(name), format='png')
+		# plt.savefig('/Users/saracamnasio/Research/Projects/UnusuallyRB/2016_Analysis/New_fits_June16/{0}/{0}_plot.pdf'.format(name), format='pdf')
+		# plt.clf()
 		
 		# Loading the W,F and U into a spectrum 
 		medres = pyspeckit.Spectrum(xarr=W, data=F, error=U)
@@ -106,9 +110,9 @@ def MC(kind):
 		medres2 = medres.copy()
 	
 		# Creating empty arrays for all the values in output:
-		IP = [] ''' Inflection Point '''
-		lmax = [] ''' Local Maximum '''
-		lmin = [] ''' Local minimum '''
+		IP = [] 
+		lmax = [] 
+		lmin = []
 		
 		coeff0 = []
 		coeff1 = []
@@ -163,7 +167,13 @@ def MC(kind):
 			C2 = coeffs[2]
 			C3 = coeffs[1]
 			C4 = coeffs[0]
-	
+			
+			coeff0.append(C0)
+			coeff1.append(C1)
+			coeff2.append(C2)
+			coeff3.append(C3)
+			coeff4.append(C4)
+
 	
 			for i in range(len(minmax_raw)):
 				x = minmax_raw[i]
@@ -173,9 +183,9 @@ def MC(kind):
 				# Differentiating between loc max and loc min:
 				if y > 0:
 					# print "Local minimum is {0}".format(x)
+					lmin.append(x)
 					lmin_names.append(names[n])
 					lmin_types.append(types[n])
-					lmin.append(x)
 					lmin_spt.append(spt[n])
 					lmin_JK.append(JK[n])
 	
@@ -185,8 +195,8 @@ def MC(kind):
 					lmax_names.append(names[n])
 					lmax_spt.append(spt[n])
 					lmax_JK.append(JK[n])
-	
-	''' need to add mu and sigma for critical points '''
+				else: 
+					pass
 			
 			new_flux = medres2.baseline.basespec
 			plt.plot(W, new_flux, color='red', alpha=0.4)
@@ -196,13 +206,16 @@ def MC(kind):
 		plt.plot(W, F, color='black')
 		# plt.savefig('/Users/saracamnasio/Research/Projects/UnusuallyRB/2016_Analysis/New_fits_June16/{0}/{0}_specfit.png'.format(name), format='png')
 		
-		# This calculates mean and standard deviation for all of the coefficients 
+		# This calculates mean and standard deviation for all of the coefficients & critical points
 		mu0,sigma0 = norm.fit(coeff0)
 		mu1,sigma1 = norm.fit(coeff1)
 		mu2,sigma2 = norm.fit(coeff2)
 		mu3,sigma3 = norm.fit(coeff3)
 		mu4,sigma4 = norm.fit(coeff4)
-		
+		mu5,sigma5 = norm.fit(IP)
+		mu6,sigma6 = norm.fit(lmax)
+		mu7,sigma7 = norm.fit(lmin)
+
 		# This plots the histogram distribution of the data (much like the corner plot). It's a sanity check to see if std and mu make sense.
 		plt.figure()
 		plt.hist(coeff0, 10, normed=True, facecolor='orange', histtype='stepfilled')
@@ -240,21 +253,52 @@ def MC(kind):
 		plt.ylabel('Probability')
 		plt.xlabel('Coefficient value')
 		# plt.savefig('/Users/saracamnasio/Research/Projects/UnusuallyRB/2016_Analysis/New_fits_June16/{0}/{0}_hist_4th.png'.format(name), format='png')
- 	
+ 		
+ 		plt.figure()
+		plt.hist(IP, 10, normed=True, facecolor='orange', histtype='stepfilled')
+		plt.title("Inflection Point")
+		plt.ylabel('Probability')
+		plt.xlabel('IP value')
+
+		plt.figure()
+		plt.hist(lmax, 10, normed=True, facecolor='orange', histtype='stepfilled')
+		plt.title("Local Maximum")
+		plt.ylabel('Probability')
+		plt.xlabel('Lmax value')
+
+		plt.figure()
+		plt.hist(lmin, 10, normed=True, facecolor='orange', histtype='stepfilled')
+		plt.title("Local Minimum")
+		plt.ylabel('Probability')
+		plt.xlabel('Lmin value')
+
 		coeff0 = np.array(coeff0)
 		coeff1 = np.array(coeff1)
 		coeff2 = np.array(coeff2)
 		coeff3 = np.array(coeff3)
 		coeff4 = np.array(coeff4)
+		IP = np.array(IP)
+		lmin = np.array(lmin)
+		lmax = np.array(lmax)
 		
 		coeff_MC = np.vstack([coeff0, coeff1, coeff2, coeff3, coeff4])
 		coeff_MC2 =  np.transpose(coeff_MC)
 
 		figure = corner.corner(coeff_MC2, labels=[r"$0th Coefficient$", r"$1st Coefficient$", r"$2nd Coefficient$", r"$3rd Coefficient$", r"$4th Coefficient$"], quantiles=[0.16, 0.5, 0.84], plot_contours=True, label_args={'fontsize':15}, color='black')
 		figure.gca().annotate("MC Uncertainty Analysis of {0} Pyspeckit Fitting".format(name), xy=(1.2, 1.0), xycoords="figure fraction", xytext=(0, -5), textcoords="offset points", ha="center", va="top")
-		# plt.savefig('/Users/saracamnasio/Research/Projects/UnusuallyRB/2016_Analysis/New_fits_June16/{0}/{0}_MCplot.png'.format(name), format='png')
-		print '{0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}, {10} '.format(name, mu4, sigma4, mu3, sigma3, mu2, sigma2, mu1, sigma1, mu0, sigma0)
-		new_array = np.vstack([W, F, U])
+
+		# plt.savefig('/Users/saracamnasio/Research/Projects/UnusuallyRB/2016_Analysis/New_fits_June16/{0}/{0}_MCplot_coeffs.png'.format(name), format='png')
+
+		CP_MC = np.vstack([IP, lmax, lmin])
+		CP_MC2 =  np.transpose(CP_MC)
+
+		figure = corner.corner(CP_MC2, labels=[r"$Inflection Point$", r"$Local Maximum$", r"$Local Minimum$"], quantiles=[0.16, 0.5, 0.84], plot_contours=True, label_args={'fontsize':15}, color='black')
+		figure.gca().annotate("MC Uncertainty Analysis of {0} Critical Points".format(name), xy=(1.2, 1.0), xycoords="figure fraction", xytext=(0, -5), textcoords="offset points", ha="center", va="top")
+
+		# plt.savefig('/Users/saracamnasio/Research/Projects/UnusuallyRB/2016_Analysis/New_fits_June16/{0}/{0}_MCplot_CP.png'.format(name), format='png')
+		
+		# print '{0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}, {10} '.format(name, mu4, sigma4, mu3, sigma3, mu2, sigma2, mu1, sigma1, mu0, sigma0)
+		new_array = np.vstack([coeff0, coeff1, coeff2, coeff3, coeff4, IP, lmax, lmin])
 		new_array = np.transpose(new_array)
 		# np.savetxt('/Users/saracamnasio/Research/Projects/UnusuallyRB/2016_Analysis/New_fits_June16/{0}/{0}_unc_arrays'.format(name), new_array)
 
