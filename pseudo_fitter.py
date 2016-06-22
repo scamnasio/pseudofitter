@@ -291,12 +291,12 @@ def MC(z):
 		figure.gca().annotate("MC Uncertainty Analysis of {0} Pyspeckit Fitting".format(name), xy=(1.2, 1.0), xycoords="figure fraction", xytext=(0, -5), textcoords="offset points", ha="center", va="top")
 		plt.savefig('/Users/saracamnasio/Research/Projects/UnusuallyRB/2016_Analysis/New_fits_June16/{0}_{1}/{1}_MCplot_coeffs.png'.format(n, name), format='png')
 
-		new_array = np.vstack([coeff0, coeff1, coeff2, coeff3, coeff4, lmin, lmax, IP])
-		new_array = np.transpose(new_array)
-		np.savetxt('/Users/saracamnasio/Research/Projects/UnusuallyRB/2016_Analysis/New_fits_June16/{0}_{1}/{1}_unc_arrays.txt'.format(n, name), new_array)
+		output_arrays = np.vstack([coeff0, coeff1, coeff2, coeff3, coeff4, lmin, lmax, IP])
+		output_arrays = np.transpose(output_arrays)
+		np.savetxt('/Users/saracamnasio/Research/Projects/UnusuallyRB/2016_Analysis/New_fits_June16/{0}_{1}/{1}_unc_arrays.txt'.format(n, name), output_arrays)
 
-		# list1=[58,100,'dir1/dir2/dir3/file.txt',0.8]
+		results_row = [name, mu0, sigma0, mu1, sigma1, mu2, sigma2, mu3, sigma3, mu4, sigma4, mu5, sigma5, mu6, sigma6, mu7, sigma7]
 
-		# with open("output.csv", "a") as fp:
-    		# wr = csv.writer(fp, dialect='excel')
-    		# wr.writerow(list1)
+		with open("/Users/saracamnasio/Research/Projects/UnusuallyRB/2016_Analysis/New_fits_June16/Results.csv", "a") as fp:
+    		wr = csv.writer(fp, dialect='excel')
+    		wr.writerow(results_row)
