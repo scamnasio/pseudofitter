@@ -109,13 +109,12 @@ def MC(z):
 		plt.annotate('{0}'.format(name), xy=(1.26, 0.7), xytext=(1.26, 0.7), color='black', weight='semibold', fontsize=15)
 		plt.ylim(0.3,1.4)
 		plt.xlim(1.15,1.325)
-
 		# Save the plain spectrum: 
 		if not os.path.exists('/Users/saracamnasio/Research/Projects/UnusuallyRB/2016_Analysis/New_fits_June16/{0}_{1}'.format(n, name)):
 			os.makedirs('/Users/saracamnasio/Research/Projects/UnusuallyRB/2016_Analysis/New_fits_June16/{0}_{1}'.format(n, name))
 		plt.savefig('/Users/saracamnasio/Research/Projects/UnusuallyRB/2016_Analysis/New_fits_June16/{0}_{1}/{1}_plot.png'.format(n, name), format='png')
 		plt.savefig('/Users/saracamnasio/Research/Projects/UnusuallyRB/2016_Analysis/New_fits_June16/{0}_{1}/{1}_plot.pdf'.format(n, name), format='pdf')
-		# plt.close()
+		plt.close()
 		
 		# Loading the W,F and U into a Pyspeckit spectrum:
 		medres = pyspeckit.Spectrum(xarr=W, data=F, error=U)
@@ -123,18 +122,20 @@ def MC(z):
 		medres2 = medres.copy()
 	
 		# Creating empty arrays for all the values in output:
-		IP = [] 
-		lmax = [] 
+		 
+		lmax_raw = [] 
+		lmin_raw = []
+		IP =[]
 		lmin = []
-		
+		lmax =[]
 		coeff0 = []
 		coeff1 = []
 		coeff2 = []
 		coeff3 = []
 		coeff4 = []
+		outliers = []
 
 		# MC loop:
-
 		for i in range(z):
 			medres2.data = medres.data + np.random.randn(medres.data.size)*medres.error
 			medres2.baseline(xmin=1.15, xmax=1.325, ymin=0.15, ymax=1.4, subtract=False, highlight_fitregion=False, selectregion=True, exclude=[1.167129, 1.1817135, 1.238683, 1.257725], order=4)
@@ -157,47 +158,79 @@ def MC(z):
 			p3 = np.polyder(p, m=2)
 			second_der = p3(W)
 			second_der = np.array(second_der)
-			minmax_raw = p2.r
-			inf_raw = p3.r
-			
-			# Making sure the inflection points are within range of interest:
-			for c in range(len(inf_raw)):
-				x = inf_raw[c] 
-				if 1.15 <= x <= 1.25:
-					IP.append(x)
-				else:
-					pass
+			minmax_raw1 = p2.r
+			inf_raw1 = p3.r
+			print "inf_raw is {0} and the min max are: {1}".format(inf_raw, minmax_raw)
+			inf_raw2 = inf_raw1[inf_raw1>1.15]
+			inf_raw = inf_raw2[inf_raw2<1.325]
+			minmax_raw2 = minmax_raw1[minmax_raw1>1.15]
+			minmax_raw = minmax_raw2[minmax_raw2<1.325]
+
+			if len(inf_raw)>=2:
+				print "More than one inflection points: {0}. They are {1}".format(len(inf_raw), inf_raw)
+				IP_interest = inf_raw[0]
+				IP.append(IP_interest)
+			elif len(inf_raw)<=1:
+				print "Just one inflection point: {0}".format(inf_raw)
+				IP.append(inf_raw)
+			else:
+				pass
+
 
 			# Differentiating between loc max and loc min through 2nd deriv test:
+			
 			for l in range(len(minmax_raw)):
 				x = minmax_raw[l]
 				y = p3(x)
 				if y > 0:
-					if 1.15 <= x <= 1.22: # making sure point is within range of interest 1.15-1.325
-						lmin.append(x)
-					else:
-						pass
+					lmin_raw.append(x)
 				elif y < 0:
-					if 1.15 <= x <= 1.325:
-						lmax.append(x)
-					else:
-						pass
-		
+					lmax_raw.append(x)
+				else:
+					pass
+
+			if len(lmin_raw)>=2:
+				print "More than one local minima: {0}. They are {1}".format(len(lmin_raw), lmin_raw)
+				lmin_interest = lmin_raw[0]
+				lmin.append(lmin_interest)
+			elif len(lmin_raw)<=1:
+				print "Just one local minimum point: {0}".format(lmin_raw)
+				lmin.append(lmin_raw)
+			else: 
+				pass
+
+			if len(lmax_raw)>=2:
+				print "More than one local minima: {0}. They are {1}".format(len(lmax_raw), lmax_raw)
+				lmax_interest = lmax_raw[0]
+				lmax.append(lmax_interest)
+			elif len(lmax_raw)<=1:
+				print "Just one local minimum point: {0}".format(lmax_raw)
+				lmin.append(lmax_raw)
+			else:
+				pass
+
+
+		print "the length of the arrays: {0},{1},{2}".format(len(lmax), len(lmin), len(IP))
 			
+				
 			# Keeping track of the varying spectrum due to MC loop:
-			new_flux = medres2.baseline.basespec
-			plt.plot(W, new_flux, color='red', alpha=0.1)
-			plt.scatter(lmin, p(lmin), color = 'green', alpha = 1)
-			plt.scatter(lmax, p(lmax), color = 'orange', alpha = 1)
-			plt.scatter(IP, p(IP), color = 'blue', alpha = 1)
+			# new_flux = medres2.baseline.basespec
+			# plt.plot(W, new_flux, color='red', alpha=0.1)
+			# plt.scatter(lmin, p(lmin), color = 'green', alpha = 1)
+			# plt.scatter(lmax, p(lmax), color = 'orange', alpha = 1)
+			# plt.scatter(IP, p(IP), color = 'blue', alpha = 1)
 			
 
 
 		# This provides the black base spectrum to be overplotted with the red fits in the line above, leave here!
-		plt.plot(W, F, color='black')
-		plt.savefig('/Users/saracamnasio/Research/Projects/UnusuallyRB/2016_Analysis/New_fits_June16/{0}_{1}/{1}_specfit.png'.format(n, name), format='png')
-		plt.savefig('/Users/saracamnasio/Research/Projects/UnusuallyRB/2016_Analysis/New_fits_June16/{0}_{1}/{1}_specfit.pdf'.format(n, name), format='pdf')
-		
+		# plt.plot(W, F, color='black')
+	
+		# Keeping it real:
+		# lmin = np.real(np.array(lmin_raw))
+		# lmax = np.real(np.array(lmax_raw))
+		# IP = np.real(np.array(IP_raw))
+
+
 		# This calculates mean and standard deviation for all of the coefficients & critical points
 		mu0,sigma0 = norm.fit(coeff0)
 		mu1,sigma1 = norm.fit(coeff1)
@@ -208,47 +241,95 @@ def MC(z):
 		mu6,sigma6 = norm.fit(lmax)
 		mu7,sigma7 = norm.fit(lmin)
 
-		# This plots the histogram distribution of the data (much like the corner plot). It's a sanity check to see if std and mu make sense.
-		plt.figure()
-		plt.hist(coeff0, 10, normed=True, facecolor='orange', histtype='stepfilled')
-		plt.title("Coefficient 0")
-		plt.ylabel('Probability')
-		plt.xlabel('Coefficient value')
-		plt.savefig('/Users/saracamnasio/Research/Projects/UnusuallyRB/2016_Analysis/New_fits_June16/{0}_{1}/{1}_hist_0th.png'.format(n, name), format='png')
-		plt.close()
-	
-		plt.figure()
-		plt.hist(coeff1, 10, normed=True, facecolor='orange', histtype='stepfilled') 
-		plt.title("Coefficient 1")
-		plt.ylabel('Probability')
-		plt.xlabel('Coefficient value')
-		plt.savefig('/Users/saracamnasio/Research/Projects/UnusuallyRB/2016_Analysis/New_fits_June16/{0}_{1}/{1}_hist_1st.png'.format(n, name), format='png')
-		plt.close()
+		# Trimming out any statistical  outliers:
 
-		plt.figure()
-		plt.hist(coeff2, 10, normed=True, facecolor='orange', histtype='stepfilled')
-		plt.title("Coefficient 2")
-		plt.ylabel('Probability')
-		plt.xlabel('Coefficient value')
-		plt.savefig('/Users/saracamnasio/Research/Projects/UnusuallyRB/2016_Analysis/New_fits_June16/{0}_{1}/{1}_hist_2nd.png'.format(n, name), format='png')
-		plt.close()
+		# value_1 = [lmin_raw, mu7, sigma7, lmin]
+		# value_2 = [lmax_raw, mu6, sigma6, lmax]
+		# value_3 = [IP_raw, mu5, sigma5, IP]
+
+		''' 
+		legend for this part of the code:
+		v = array of lmin, lmax or IP
+		j = mean value of array of lmin, lmax or IP
+		k = sigma of array of lmin, lmax or IP
+		d = [0,1000] index
+		h = individual value of lmin, lmax, or IP
+
+
+		'''
+		# for v, j, k, g in zip(value_1, value_2, value_3):
+			# for d in range(len(v)):
+					# h = v[d]
+					# here I am excluding 3sigma outliers based on the computed sigmas above
+					# if j-(3*k) <= h <= j+(3*k):
+						# g.append(h)
+					# elif j-(3*k) > h > j+(3*k):
+						# pass
+					# else: 
+						# print "This value is funky"
 		
-		plt.figure()
-		plt.hist(coeff3, 10, normed=True, facecolor='orange', histtype='stepfilled') 
-		plt.title("Coefficient 3")
-		plt.ylabel('Probability')
-		plt.xlabel('Coefficient value')
-		plt.savefig('/Users/saracamnasio/Research/Projects/UnusuallyRB/2016_Analysis/New_fits_June16/{0}_{1}/{1}_hist_3rd.png'.format(n, name), format='png')
-		plt.close()
+		
+
+
+		# lists_of_lists = [value_1, value_2, value_3]		
+		# for G in zip(lists_of_lists):
+			# print G
+			# for v, j, k, g in G:
+				# print v, j, k, g
+				# for d in range(len(v)):
+						# h = v[d]
+						# if j-(3*k) <= h <= j+(3*k):
+							# print "accepted: value {0} is between {1} and {2}, mean is {3}".format(h, j-(3*k), j+(3*k), j)
+							# g.append(h)
+						# else:
+							# print "rejected: value {0} is not between {1} and {2}, mean is {3}".format(h, j-(3*k), j+(3*k), j)
+							# outliers.append(h)
+							# print "Number of outliers: {0}".format(len(outliers)) 
+							# 
+# 
+
+
+		# This plots the histogram distribution of the data (much like the corner plot). It's a sanity check to see if std and mu make sense.
+		# plt.figure()
+		# plt.hist(coeff0, 10, normed=True, facecolor='orange', histtype='stepfilled')
+		# plt.title("Coefficient 0")
+		# plt.ylabel('Probability')
+		# plt.xlabel('Coefficient value')
+		# plt.savefig('/Users/saracamnasio/Research/Projects/UnusuallyRB/2016_Analysis/New_fits_June16/{0}_{1}/{1}_hist_0th.png'.format(n, name), format='png')
+		# plt.close()
+	
+		# plt.figure()
+		# plt.hist(coeff1, 10, normed=True, facecolor='orange', histtype='stepfilled') 
+		# plt.title("Coefficient 1")
+		# plt.ylabel('Probability')
+		# plt.xlabel('Coefficient value')
+		# plt.savefig('/Users/saracamnasio/Research/Projects/UnusuallyRB/2016_Analysis/New_fits_June16/{0}_{1}/{1}_hist_1st.png'.format(n, name), format='png')
+		# plt.close()
+
+		# plt.figure()
+		# plt.hist(coeff2, 10, normed=True, facecolor='orange', histtype='stepfilled')
+		# plt.title("Coefficient 2")
+		# plt.ylabel('Probability')
+		# plt.xlabel('Coefficient value')
+		# plt.savefig('/Users/saracamnasio/Research/Projects/UnusuallyRB/2016_Analysis/New_fits_June16/{0}_{1}/{1}_hist_2nd.png'.format(n, name), format='png')
+		# plt.close()
+		
+		# plt.figure()
+		# plt.hist(coeff3, 10, normed=True, facecolor='orange', histtype='stepfilled') 
+		# plt.title("Coefficient 3")
+		# plt.ylabel('Probability')
+		# plt.xlabel('Coefficient value')
+		# plt.savefig('/Users/saracamnasio/Research/Projects/UnusuallyRB/2016_Analysis/New_fits_June16/{0}_{1}/{1}_hist_3rd.png'.format(n, name), format='png')
+		# plt.close()
 	
 	
-		plt.figure()
-		plt.hist(coeff4, 10, normed=True, facecolor='orange', histtype='stepfilled')
-		plt.title("Coefficient 4")
-		plt.ylabel('Probability')
-		plt.xlabel('Coefficient value')
-		plt.savefig('/Users/saracamnasio/Research/Projects/UnusuallyRB/2016_Analysis/New_fits_June16/{0}_{1}/{1}_hist_4th.png'.format(n, name), format='png')
-		plt.close()
+		# plt.figure()
+		# plt.hist(coeff4, 10, normed=True, facecolor='orange', histtype='stepfilled')
+		# plt.title("Coefficient 4")
+		# plt.ylabel('Probability')
+		# plt.xlabel('Coefficient value')
+		# plt.savefig('/Users/saracamnasio/Research/Projects/UnusuallyRB/2016_Analysis/New_fits_June16/{0}_{1}/{1}_hist_4th.png'.format(n, name), format='png')
+		# plt.close()
  		
  		plt.figure()
 		plt.hist(IP, 10, normed=True, facecolor='orange', histtype='stepfilled')
@@ -256,7 +337,7 @@ def MC(z):
 		plt.ylabel('Probability')
 		plt.xlabel('IP value')
 		plt.savefig('/Users/saracamnasio/Research/Projects/UnusuallyRB/2016_Analysis/New_fits_June16/{0}_{1}/{1}_hist_IP.png'.format(n, name), format='png')
-		plt.close()
+		# plt.close()
 
 		plt.figure()
 		plt.hist(lmax, 10, normed=True, facecolor='orange', histtype='stepfilled')
@@ -264,7 +345,7 @@ def MC(z):
 		plt.ylabel('Probability')
 		plt.xlabel('Lmax value')
 		plt.savefig('/Users/saracamnasio/Research/Projects/UnusuallyRB/2016_Analysis/New_fits_June16/{0}_{1}/{1}_hist_lmax.png'.format(n, name), format='png')
-		plt.close()
+		# plt.close()
 
 		plt.figure()
 		plt.hist(lmin, 10, normed=True, facecolor='orange', histtype='stepfilled')
@@ -272,7 +353,7 @@ def MC(z):
 		plt.ylabel('Probability')
 		plt.xlabel('Lmin value')
 		plt.savefig('/Users/saracamnasio/Research/Projects/UnusuallyRB/2016_Analysis/New_fits_June16/{0}_{1}/{1}_hist_lmin.png'.format(n, name), format='png')
-		plt.close()
+		# plt.close()
 
 		coeff0 = np.array(coeff0)
 		coeff1 = np.array(coeff1)
@@ -284,13 +365,22 @@ def MC(z):
 		lmax = np.array(lmax)
 
 		# Making corner plot:
-		coeff_MC = np.vstack([coeff0, coeff1, coeff2, coeff3, coeff4])
-		coeff_MC2 =  np.transpose(coeff_MC)
+		# coeff_MC = np.vstack([coeff0, coeff1, coeff2, coeff3, coeff4])
+		# coeff_MC2 =  np.transpose(coeff_MC)
+# 
+		# figure = corner.corner(coeff_MC2, labels=[r"$0th Coefficient$", r"$1st Coefficient$", r"$2nd Coefficient$", r"$3rd Coefficient$", r"$4th Coefficient$"], quantiles=[0.16, 0.5, 0.84], plot_contours=True, label_args={'fontsize':15}, color='black')
+		# figure.gca().annotate("MC Uncertainty Analysis of {0} Pyspeckit Fitting".format(name), xy=(1.2, 1.0), xycoords="figure fraction", xytext=(0, -5), textcoords="offset points", ha="center", va="top")
+		# plt.savefig('/Users/saracamnasio/Research/Projects/UnusuallyRB/2016_Analysis/New_fits_June16/{0}_{1}/{1}_MCplot_coeffs.png'.format(n, name), format='png')
+		# plt.close()
+# 
+		# CP_MC = np.vstack([IP, lmin, lmax])
+		# CP_MC2 =  np.transpose(CP_MC)
 
-		figure = corner.corner(coeff_MC2, labels=[r"$0th Coefficient$", r"$1st Coefficient$", r"$2nd Coefficient$", r"$3rd Coefficient$", r"$4th Coefficient$"], quantiles=[0.16, 0.5, 0.84], plot_contours=True, label_args={'fontsize':15}, color='black')
-		figure.gca().annotate("MC Uncertainty Analysis of {0} Pyspeckit Fitting".format(name), xy=(1.2, 1.0), xycoords="figure fraction", xytext=(0, -5), textcoords="offset points", ha="center", va="top")
-		plt.savefig('/Users/saracamnasio/Research/Projects/UnusuallyRB/2016_Analysis/New_fits_June16/{0}_{1}/{1}_MCplot_coeffs.png'.format(n, name), format='png')
-
+		# figure2 = corner.corner(CP_MC2, labels=[r"$Inflection Point$", r"$Local Min$", r"$Local max$"], quantiles=[0.16, 0.5, 0.84], plot_contours=True, label_args={'fontsize':15}, color='black')
+		# figure2.gca().annotate("MC Uncertainty Analysis of {0} Pyspeckit Fitting".format(name), xy=(1.2, 1.0), xycoords="figure fraction", xytext=(0, -5), textcoords="offset points", ha="center", va="top")
+		# plt.savefig('/Users/saracamnasio/Research/Projects/UnusuallyRB/2016_Analysis/New_fits_June16/{0}_{1}/{1}_MC_CPpoints.png'.format(n, name), format='png')
+		# plt.close()
+# 
 		output_arrays = np.vstack([coeff0, coeff1, coeff2, coeff3, coeff4, lmin, lmax, IP])
 		output_arrays = np.transpose(output_arrays)
 		np.savetxt('/Users/saracamnasio/Research/Projects/UnusuallyRB/2016_Analysis/New_fits_June16/{0}_{1}/{1}_unc_arrays.txt'.format(n, name), output_arrays)
@@ -298,5 +388,5 @@ def MC(z):
 		results_row = [name, mu0, sigma0, mu1, sigma1, mu2, sigma2, mu3, sigma3, mu4, sigma4, mu5, sigma5, mu6, sigma6, mu7, sigma7]
 
 		with open("/Users/saracamnasio/Research/Projects/UnusuallyRB/2016_Analysis/New_fits_June16/Results.csv", "a") as fp:
-    		wr = csv.writer(fp, dialect='excel')
-    		wr.writerow(results_row)
+ 			wr = csv.writer(fp, dialect='excel')
+ 			wr.writerow(results_row)
