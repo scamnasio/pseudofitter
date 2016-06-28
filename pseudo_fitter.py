@@ -22,7 +22,7 @@ import csv
 # db = astrodb.get_db('/Users/saracamnasio/Dropbox/BDNYCdb/BDNYC.db')
 
 # data = np.genfromtxt("/Users/saracamnasio/Research/Projects/UnusuallyRB/Source_Data/2M2151+34.txt", delimiter='', dtype = float)
-def MC(z):
+def MC(N, z):
 	'''
 	*z*
 		int - number of MC iterations
@@ -35,7 +35,7 @@ def MC(z):
 	names = source[:,0]
 	
 	# Iterating through different uncertainty types:
-	for n in range(len(data_paths)):
+	for n in range(N-1, len(data_paths)):
 		if source[n,2] == "err":
 			name = names[n]
 			print "Object: {0}".format(name)
@@ -123,8 +123,7 @@ def MC(z):
 	
 		# Creating empty arrays for all the values in output:
 		 
-		lmax_raw = [] 
-		lmin_raw = []
+		
 		IP =[]
 		lmin = []
 		lmax =[]
@@ -135,8 +134,12 @@ def MC(z):
 		coeff4 = []
 		outliers = []
 
+		
 		# MC loop:
 		for i in range(z):
+			lmax_raw = [] 
+			inf_raw = []
+			lmin_raw = []
 			medres2.data = medres.data + np.random.randn(medres.data.size)*medres.error
 			medres2.baseline(xmin=1.15, xmax=1.325, ymin=0.15, ymax=1.4, subtract=False, highlight_fitregion=False, selectregion=True, exclude=[1.167129, 1.1817135, 1.238683, 1.257725], order=4)
 			
@@ -160,19 +163,19 @@ def MC(z):
 			second_der = np.array(second_der)
 			minmax_raw1 = p2.r
 			inf_raw1 = p3.r
-			print "inf_raw is {0} and the min max are: {1}".format(inf_raw, minmax_raw)
-			inf_raw2 = inf_raw1[inf_raw1>1.15]
+			# print "inf_raw is {0} and the min max are: {1}".format(inf_raw, minmax_raw)
+			inf_raw2 = inf_raw1[inf_raw1>1.10]
 			inf_raw = inf_raw2[inf_raw2<1.325]
-			minmax_raw2 = minmax_raw1[minmax_raw1>1.15]
+			minmax_raw2 = minmax_raw1[minmax_raw1>1.10]
 			minmax_raw = minmax_raw2[minmax_raw2<1.325]
 
 			if len(inf_raw)>=2:
-				print "More than one inflection points: {0}. They are {1}".format(len(inf_raw), inf_raw)
+				# print "More than one inflection points: {0}. They are {1}".format(len(inf_raw), inf_raw)
 				IP_interest = inf_raw[0]
 				IP.append(IP_interest)
 			elif len(inf_raw)<=1:
-				print "Just one inflection point: {0}".format(inf_raw)
-				IP.append(inf_raw)
+				# print "Just one inflection point: {0}".format(inf_raw)
+				IP.append(inf_raw[0])
 			else:
 				pass
 
@@ -190,28 +193,24 @@ def MC(z):
 					pass
 
 			if len(lmin_raw)>=2:
-				print "More than one local minima: {0}. They are {1}".format(len(lmin_raw), lmin_raw)
+				# print "More than one local minima: {0}. They are {1}".format(len(lmin_raw), lmin_raw)
 				lmin_interest = lmin_raw[0]
 				lmin.append(lmin_interest)
-			elif len(lmin_raw)<=1:
-				print "Just one local minimum point: {0}".format(lmin_raw)
-				lmin.append(lmin_raw)
+			elif len(lmin_raw)==1:
+				# print "Just one local minimum point: {0}".format(lmin_raw)
+				lmin.append(lmin_raw[0])
 			else: 
-				pass
+				"FUNKY STUFF"
 
 			if len(lmax_raw)>=2:
-				print "More than one local minima: {0}. They are {1}".format(len(lmax_raw), lmax_raw)
+				# print "More than one local minima: {0}. They are {1}".format(len(lmax_raw), lmax_raw)
 				lmax_interest = lmax_raw[0]
 				lmax.append(lmax_interest)
-			elif len(lmax_raw)<=1:
-				print "Just one local minimum point: {0}".format(lmax_raw)
-				lmin.append(lmax_raw)
+			elif len(lmax_raw)==1:
+				# print "Just one local minimum point: {0}".format(lmax_raw)
+				lmax.append(lmax_raw[0])
 			else:
-				pass
-
-
-		print "the length of the arrays: {0},{1},{2}".format(len(lmax), len(lmin), len(IP))
-			
+				print "FUNKY STUFF"
 				
 			# Keeping track of the varying spectrum due to MC loop:
 			# new_flux = medres2.baseline.basespec
@@ -221,15 +220,22 @@ def MC(z):
 			# plt.scatter(IP, p(IP), color = 'blue', alpha = 1)
 			
 
+		print "the length of the arrays: {0},{1},{2}".format(len(lmax), len(lmin), len(IP))
 
 		# This provides the black base spectrum to be overplotted with the red fits in the line above, leave here!
 		# plt.plot(W, F, color='black')
-	
+		# plt.scatter(lmin, p(lmin), color = 'green', alpha = 1)
+		# plt.scatter(lmax, p(lmax), color = 'orange', alpha = 1)
+		# plt.scatter(IP, p(IP), color = 'blue', alpha = 1)
+		
 		# Keeping it real:
-		# lmin = np.real(np.array(lmin_raw))
-		# lmax = np.real(np.array(lmax_raw))
-		# IP = np.real(np.array(IP_raw))
 
+		lmin = (np.real(lmin))
+		lmax = (np.real(lmax))
+		IP = (np.real(IP))
+
+		print "the length of the arrays: {0},{1},{2}".format(len(lmax), len(lmin), len(IP))
+	
 
 		# This calculates mean and standard deviation for all of the coefficients & critical points
 		mu0,sigma0 = norm.fit(coeff0)
@@ -257,35 +263,7 @@ def MC(z):
 
 
 		'''
-		# for v, j, k, g in zip(value_1, value_2, value_3):
-			# for d in range(len(v)):
-					# h = v[d]
-					# here I am excluding 3sigma outliers based on the computed sigmas above
-					# if j-(3*k) <= h <= j+(3*k):
-						# g.append(h)
-					# elif j-(3*k) > h > j+(3*k):
-						# pass
-					# else: 
-						# print "This value is funky"
-		
-		
-
-
-		# lists_of_lists = [value_1, value_2, value_3]		
-		# for G in zip(lists_of_lists):
-			# print G
-			# for v, j, k, g in G:
-				# print v, j, k, g
-				# for d in range(len(v)):
-						# h = v[d]
-						# if j-(3*k) <= h <= j+(3*k):
-							# print "accepted: value {0} is between {1} and {2}, mean is {3}".format(h, j-(3*k), j+(3*k), j)
-							# g.append(h)
-						# else:
-							# print "rejected: value {0} is not between {1} and {2}, mean is {3}".format(h, j-(3*k), j+(3*k), j)
-							# outliers.append(h)
-							# print "Number of outliers: {0}".format(len(outliers)) 
-							# 
+		at.random_subset(lmin,950)
 # 
 
 
@@ -385,7 +363,7 @@ def MC(z):
 		output_arrays = np.transpose(output_arrays)
 		np.savetxt('/Users/saracamnasio/Research/Projects/UnusuallyRB/2016_Analysis/New_fits_June16/{0}_{1}/{1}_unc_arrays.txt'.format(n, name), output_arrays)
 
-		results_row = [name, mu0, sigma0, mu1, sigma1, mu2, sigma2, mu3, sigma3, mu4, sigma4, mu5, sigma5, mu6, sigma6, mu7, sigma7]
+		results_row = [N, name, mu0, sigma0, mu1, sigma1, mu2, sigma2, mu3, sigma3, mu4, sigma4, mu5, sigma5, mu6, sigma6, mu7, sigma7]
 
 		with open("/Users/saracamnasio/Research/Projects/UnusuallyRB/2016_Analysis/New_fits_June16/Results.csv", "a") as fp:
  			wr = csv.writer(fp, dialect='excel')
