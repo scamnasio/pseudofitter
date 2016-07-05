@@ -168,6 +168,8 @@ def MC(N, z):
 			# print "inf_raw is {0} and the min max are: {1}".format(inf_raw, minmax_raw)
 			inf_raw2 = inf_raw1[inf_raw1>1.10]
 			inf_raw = inf_raw2[inf_raw2<1.33]
+			print "The lowest value in the minmax array for {0} is: {1} (compared to boundaries 1.10-1.33)".format(name, min(minmax_raw1))
+			print "The highest value in the minmax array for {0} is: {1} (compared to boundaries 1.10-1.33)".format(name, max(minmax_raw1))
 			minmax_raw2 = minmax_raw1[minmax_raw1>1.10]
 			minmax_raw = minmax_raw2[minmax_raw2<1.33]
 
