@@ -38,7 +38,7 @@ def MC(N, z):
 	for n in range(N-1, len(data_paths)):
 		if source[n,2] == "err":
 			name = names[n]
-			print "Object: {0}".format(name)
+			print "Object: {0}, index {1}".format(name, n)
 			data = data_paths[n]
 			spectrum = np.genfromtxt(data, delimiter=' ', dtype = float)
 			W1 = np.array(spectrum[:,0])
@@ -46,7 +46,8 @@ def MC(N, z):
 			U1 = np.array(spectrum[:,2])
 			
 		elif source[n,2] == "no":
-			name = "{0}_estim_unc".format(names[n])
+			name = names[n]
+			print "Object: {0}, index {1}".format(name, n)
 			data = (data_paths[n])
 			spectrum = np.genfromtxt(data, delimiter=' ', dtype = float)
 			W1 = np.array(spectrum[:,0])
@@ -56,11 +57,12 @@ def MC(N, z):
 		elif source[n,2] == "snr":
 			name = names[n]
 			data = (data_paths[n])
+			print "Object: {0}, index {1}".format(name, n)
 			spectrum = np.genfromtxt(data, delimiter=' ', dtype = float)
 			W1 = np.array(spectrum[:,0])
 			F1 = np.array(spectrum[:,1])
 			U_RAW = np.array(spectrum[:,2])
-			U1 = F/U_RAW
+			U1 = F1/U_RAW
 
 		else:
 			pass
@@ -165,9 +167,9 @@ def MC(N, z):
 			inf_raw1 = p3.r
 			# print "inf_raw is {0} and the min max are: {1}".format(inf_raw, minmax_raw)
 			inf_raw2 = inf_raw1[inf_raw1>1.10]
-			inf_raw = inf_raw2[inf_raw2<1.325]
+			inf_raw = inf_raw2[inf_raw2<1.33]
 			minmax_raw2 = minmax_raw1[minmax_raw1>1.10]
-			minmax_raw = minmax_raw2[minmax_raw2<1.325]
+			minmax_raw = minmax_raw2[minmax_raw2<1.33]
 
 			if len(inf_raw)>=2:
 				# print "More than one inflection points: {0}. They are {1}".format(len(inf_raw), inf_raw)
@@ -193,16 +195,19 @@ def MC(N, z):
 					pass
 
 			if len(lmin_raw)>=2:
+				lmin_raw = np.flipud(lmin_raw)
 				# print "More than one local minima: {0}. They are {1}".format(len(lmin_raw), lmin_raw)
 				lmin_interest = lmin_raw[0]
 				lmin.append(lmin_interest)
+				# print "lowest minima is {0}".format(lmin_raw[0])
 			elif len(lmin_raw)==1:
 				# print "Just one local minimum point: {0}".format(lmin_raw)
 				lmin.append(lmin_raw[0])
 			else: 
-				"FUNKY STUFF"
+				print "Warning: 0 values for lmin"
 
 			if len(lmax_raw)>=2:
+				lmax_raw = np.flipud(lmax_raw)
 				# print "More than one local minima: {0}. They are {1}".format(len(lmax_raw), lmax_raw)
 				lmax_interest = lmax_raw[0]
 				lmax.append(lmax_interest)
@@ -210,7 +215,7 @@ def MC(N, z):
 				# print "Just one local minimum point: {0}".format(lmax_raw)
 				lmax.append(lmax_raw[0])
 			else:
-				print "FUNKY STUFF"
+				print "Warning: 0 values for lmin"
 				
 			# Keeping track of the varying spectrum due to MC loop:
 			# new_flux = medres2.baseline.basespec
@@ -363,7 +368,7 @@ def MC(N, z):
 		output_arrays = np.transpose(output_arrays)
 		np.savetxt('/Users/saracamnasio/Research/Projects/UnusuallyRB/2016_Analysis/New_fits_June16/{0}_{1}/{1}_unc_arrays.txt'.format(n, name), output_arrays)
 
-		results_row = [N, name, mu0, sigma0, mu1, sigma1, mu2, sigma2, mu3, sigma3, mu4, sigma4, mu5, sigma5, mu6, sigma6, mu7, sigma7]
+		results_row = [n, name, mu0, sigma0, mu1, sigma1, mu2, sigma2, mu3, sigma3, mu4, sigma4, mu5, sigma5, mu6, sigma6, mu7, sigma7]
 
 		with open("/Users/saracamnasio/Research/Projects/UnusuallyRB/2016_Analysis/New_fits_June16/Results.csv", "a") as fp:
  			wr = csv.writer(fp, dialect='excel')
