@@ -221,7 +221,7 @@ def MC(N, z):
 				# print "Just one local minimum point: {0}".format(lmax_raw)
 				lmax.append(lmax_raw[0])
 			else:
-				print "Warning: 0 values for lmin"
+				print "Warning: 0 values for lmax"
 				
 			# Keeping track of the varying spectrum due to MC loop:
 			# new_flux = medres2.baseline.basespec
