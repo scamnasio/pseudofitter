@@ -21,7 +21,7 @@ import csv
 
 # db = astrodb.get_db('/Users/saracamnasio/Dropbox/BDNYCdb/BDNYC.db')
 
-# data = np.genfromtxt("/Users/saracamnasio/Research/Projects/UnusuallyRB/Source_Data/2M2151+34.txt", delimiter='', dtype = float)
+# data = np.genfromtxt("/Users/saracamnasio/Dropbox/Research/Projects/UnusuallyRB/Source_Data/2M2151+34.txt", delimiter='', dtype = float)
 def MC(N, z):
 	'''
 	*z*
@@ -114,10 +114,10 @@ def MC(N, z):
 		plt.ylim(0.3,1.4)
 		plt.xlim(1.15,1.325)
 		# Save the plain spectrum: 
-		if not os.path.exists('/Users/saracamnasio/Research/Projects/UnusuallyRB/2016_Analysis/New_fits_June16/{0}_{1}'.format(n, name)):
-			os.makedirs('/Users/saracamnasio/Research/Projects/UnusuallyRB/2016_Analysis/New_fits_June16/{0}_{1}'.format(n, name))
-		plt.savefig('/Users/saracamnasio/Research/Projects/UnusuallyRB/2016_Analysis/New_fits_June16/{0}_{1}/{1}_plot.png'.format(n, name), format='png')
-		plt.savefig('/Users/saracamnasio/Research/Projects/UnusuallyRB/2016_Analysis/New_fits_June16/{0}_{1}/{1}_plot.pdf'.format(n, name), format='pdf')
+		if not os.path.exists('/Users/saracamnasio/Dropbox/Research/Projects/UnusuallyRB/2016_Analysis/New_fits_June16/{0}_{1}'.format(n, name)):
+			os.makedirs('/Users/saracamnasio/Dropbox/Research/Projects/UnusuallyRB/2016_Analysis/New_fits_June16/{0}_{1}'.format(n, name))
+		plt.savefig('/Users/saracamnasio/Dropbox/Research/Projects/UnusuallyRB/2016_Analysis/New_fits_June16/{0}_{1}/{1}_plot.png'.format(n, name), format='png')
+		plt.savefig('/Users/saracamnasio/Dropbox/Research/Projects/UnusuallyRB/2016_Analysis/New_fits_June16/{0}_{1}/{1}_plot.pdf'.format(n, name), format='pdf')
 		plt.close()
 		
 		# Loading the W,F and U into a Pyspeckit spectrum:
@@ -266,7 +266,7 @@ def MC(N, z):
 		# plt.title("Coefficient 0")
 		# plt.ylabel('Probability')
 		# plt.xlabel('Coefficient value')
-		# plt.savefig('/Users/saracamnasio/Research/Projects/UnusuallyRB/2016_Analysis/New_fits_June16/{0}_{1}/{1}_hist_0th.png'.format(n, name), format='png')
+		# plt.savefig('/Users/saracamnasio/Dropbox/Research/Projects/UnusuallyRB/2016_Analysis/New_fits_June16/{0}_{1}/{1}_hist_0th.png'.format(n, name), format='png')
 		# plt.close()
 	
 		# plt.figure()
@@ -274,7 +274,7 @@ def MC(N, z):
 		# plt.title("Coefficient 1")
 		# plt.ylabel('Probability')
 		# plt.xlabel('Coefficient value')
-		# plt.savefig('/Users/saracamnasio/Research/Projects/UnusuallyRB/2016_Analysis/New_fits_June16/{0}_{1}/{1}_hist_1st.png'.format(n, name), format='png')
+		# plt.savefig('/Users/saracamnasio/Dropbox/Research/Projects/UnusuallyRB/2016_Analysis/New_fits_June16/{0}_{1}/{1}_hist_1st.png'.format(n, name), format='png')
 		# plt.close()
 
 		# plt.figure()
@@ -282,7 +282,7 @@ def MC(N, z):
 		# plt.title("Coefficient 2")
 		# plt.ylabel('Probability')
 		# plt.xlabel('Coefficient value')
-		# plt.savefig('/Users/saracamnasio/Research/Projects/UnusuallyRB/2016_Analysis/New_fits_June16/{0}_{1}/{1}_hist_2nd.png'.format(n, name), format='png')
+		# plt.savefig('/Users/saracamnasio/Dropbox/Research/Projects/UnusuallyRB/2016_Analysis/New_fits_June16/{0}_{1}/{1}_hist_2nd.png'.format(n, name), format='png')
 		# plt.close()
 		
 		# plt.figure()
@@ -290,7 +290,7 @@ def MC(N, z):
 		# plt.title("Coefficient 3")
 		# plt.ylabel('Probability')
 		# plt.xlabel('Coefficient value')
-		# plt.savefig('/Users/saracamnasio/Research/Projects/UnusuallyRB/2016_Analysis/New_fits_June16/{0}_{1}/{1}_hist_3rd.png'.format(n, name), format='png')
+		# plt.savefig('/Users/saracamnasio/Dropbox/Research/Projects/UnusuallyRB/2016_Analysis/New_fits_June16/{0}_{1}/{1}_hist_3rd.png'.format(n, name), format='png')
 		# plt.close()
 	
 	
@@ -299,7 +299,7 @@ def MC(N, z):
 		# plt.title("Coefficient 4")
 		# plt.ylabel('Probability')
 		# plt.xlabel('Coefficient value')
-		# plt.savefig('/Users/saracamnasio/Research/Projects/UnusuallyRB/2016_Analysis/New_fits_June16/{0}_{1}/{1}_hist_4th.png'.format(n, name), format='png')
+		# plt.savefig('/Users/saracamnasio/Dropbox/Research/Projects/UnusuallyRB/2016_Analysis/New_fits_June16/{0}_{1}/{1}_hist_4th.png'.format(n, name), format='png')
 		# plt.close()
  		
  		plt.figure()
@@ -307,7 +307,7 @@ def MC(N, z):
 		plt.title("Inflection Point")
 		plt.ylabel('Probability')
 		plt.xlabel('IP value')
-		plt.savefig('/Users/saracamnasio/Research/Projects/UnusuallyRB/2016_Analysis/New_fits_June16/{0}_{1}/{1}_hist_IP.png'.format(n, name), format='png')
+		plt.savefig('/Users/saracamnasio/Dropbox/Research/Projects/UnusuallyRB/2016_Analysis/New_fits_June16/{0}_{1}/{1}_hist_IP.png'.format(n, name), format='png')
 		# plt.close()
 
 		plt.figure()
@@ -315,7 +315,7 @@ def MC(N, z):
 		plt.title("Local Maximum")
 		plt.ylabel('Probability')
 		plt.xlabel('Lmax value')
-		plt.savefig('/Users/saracamnasio/Research/Projects/UnusuallyRB/2016_Analysis/New_fits_June16/{0}_{1}/{1}_hist_lmax.png'.format(n, name), format='png')
+		plt.savefig('/Users/saracamnasio/Dropbox/Research/Projects/UnusuallyRB/2016_Analysis/New_fits_June16/{0}_{1}/{1}_hist_lmax.png'.format(n, name), format='png')
 		# plt.close()
 
 		plt.figure()
@@ -323,7 +323,7 @@ def MC(N, z):
 		plt.title("Local Minimum")
 		plt.ylabel('Probability')
 		plt.xlabel('Lmin value')
-		plt.savefig('/Users/saracamnasio/Research/Projects/UnusuallyRB/2016_Analysis/New_fits_June16/{0}_{1}/{1}_hist_lmin.png'.format(n, name), format='png')
+		plt.savefig('/Users/saracamnasio/Dropbox/Research/Projects/UnusuallyRB/2016_Analysis/New_fits_June16/{0}_{1}/{1}_hist_lmin.png'.format(n, name), format='png')
 		# plt.close()
 
 		coeff0 = np.array(coeff0)
@@ -341,7 +341,7 @@ def MC(N, z):
 # 
 		# figure = corner.corner(coeff_MC2, labels=[r"$0th Coefficient$", r"$1st Coefficient$", r"$2nd Coefficient$", r"$3rd Coefficient$", r"$4th Coefficient$"], quantiles=[0.16, 0.5, 0.84], plot_contours=True, label_args={'fontsize':15}, color='black')
 		# figure.gca().annotate("MC Uncertainty Analysis of {0} Pyspeckit Fitting".format(name), xy=(1.2, 1.0), xycoords="figure fraction", xytext=(0, -5), textcoords="offset points", ha="center", va="top")
-		# plt.savefig('/Users/saracamnasio/Research/Projects/UnusuallyRB/2016_Analysis/New_fits_June16/{0}_{1}/{1}_MCplot_coeffs.png'.format(n, name), format='png')
+		# plt.savefig('/Users/saracamnasio/Dropbox/Research/Projects/UnusuallyRB/2016_Analysis/New_fits_June16/{0}_{1}/{1}_MCplot_coeffs.png'.format(n, name), format='png')
 		# plt.close()
 # 
 		# CP_MC = np.vstack([IP, lmin, lmax])
@@ -349,16 +349,16 @@ def MC(N, z):
 
 		# figure2 = corner.corner(CP_MC2, labels=[r"$Inflection Point$", r"$Local Min$", r"$Local max$"], quantiles=[0.16, 0.5, 0.84], plot_contours=True, label_args={'fontsize':15}, color='black')
 		# figure2.gca().annotate("MC Uncertainty Analysis of {0} Pyspeckit Fitting".format(name), xy=(1.2, 1.0), xycoords="figure fraction", xytext=(0, -5), textcoords="offset points", ha="center", va="top")
-		# plt.savefig('/Users/saracamnasio/Research/Projects/UnusuallyRB/2016_Analysis/New_fits_June16/{0}_{1}/{1}_MC_CPpoints.png'.format(n, name), format='png')
+		# plt.savefig('/Users/saracamnasio/Dropbox/Research/Projects/UnusuallyRB/2016_Analysis/New_fits_June16/{0}_{1}/{1}_MC_CPpoints.png'.format(n, name), format='png')
 		# plt.close()
 # 
 		output_arrays = np.vstack([coeff0, coeff1, coeff2, coeff3, coeff4, lmin, lmax, IP])
 		output_arrays = np.transpose(output_arrays)
-		np.savetxt('/Users/saracamnasio/Research/Projects/UnusuallyRB/2016_Analysis/New_fits_June16/{0}_{1}/{1}_unc_arrays.txt'.format(n, name), output_arrays)
+		np.savetxt('/Users/saracamnasio/Dropbox/Research/Projects/UnusuallyRB/2016_Analysis/New_fits_June16/{0}_{1}/{1}_unc_arrays.txt'.format(n, name), output_arrays)
 
 		results_row = [n, name, mu0, sigma0, mu1, sigma1, mu2, sigma2, mu3, sigma3, mu4, sigma4, mu5, sigma5, mu6, sigma6, mu7, sigma7]
 
-		with open("/Users/saracamnasio/Research/Projects/UnusuallyRB/2016_Analysis/New_fits_June16/Results.csv", "a") as fp:
+		with open("/Users/saracamnasio/Dropbox/Research/Projects/UnusuallyRB/2016_Analysis/New_fits_June16/Results.csv", "a") as fp:
  			wr = csv.writer(fp, dialect='excel')
  			wr.writerow(results_row)
 
@@ -497,7 +497,7 @@ def MC(N, z):
 #	# plt.title("Inflection Point")
 #	# plt.ylabel('Probability')
 #	# plt.xlabel('IP value')
-#	# plt.savefig('/Users/saracamnasio/Research/Projects/UnusuallyRB/2016_Analysis/New_fits_June16/{0}_{1}/{1}_hist_IP.png'.format(n, name), format='png')
+#	# plt.savefig('/Users/saracamnasio/Dropbox/Research/Projects/UnusuallyRB/2016_Analysis/New_fits_June16/{0}_{1}/{1}_hist_IP.png'.format(n, name), format='png')
 #	plt.close()
 
 #	# plt.figure()
@@ -505,7 +505,7 @@ def MC(N, z):
 #	# plt.title("Local Maximum")
 #	# plt.ylabel('Probability')
 #	# plt.xlabel('Lmax value')
-#	# plt.savefig('/Users/saracamnasio/Research/Projects/UnusuallyRB/2016_Analysis/New_fits_June16/{0}_{1}/{1}_hist_lmax.png'.format(n, name), format='png')
+#	# plt.savefig('/Users/saracamnasio/Dropbox/Research/Projects/UnusuallyRB/2016_Analysis/New_fits_June16/{0}_{1}/{1}_hist_lmax.png'.format(n, name), format='png')
 #	plt.close()
 
 #	# plt.figure()
@@ -513,7 +513,7 @@ def MC(N, z):
 #	# plt.title("Local Minimum")
 #	# plt.ylabel('Probability')
 #	# plt.xlabel('Lmin value')
-#	# plt.savefig('/Users/saracamnasio/Research/Projects/UnusuallyRB/2016_Analysis/New_fits_June16/{0}_{1}/{1}_hist_lmin.png'.format(n, name), format='png')
+#	# plt.savefig('/Users/saracamnasio/Dropbox/Research/Projects/UnusuallyRB/2016_Analysis/New_fits_June16/{0}_{1}/{1}_hist_lmin.png'.format(n, name), format='png')
 #	plt.close()
 
 #	# coeff0 = np.array(coeff0)
@@ -531,7 +531,7 @@ def MC(N, z):
 # #
 #	figure = corner.corner(coeff_MC2, labels=[r"$0th Coefficient$", r"$1st Coefficient$", r"$2nd Coefficient$", r"$3rd Coefficient$", r"$4th Coefficient$"], quantiles=[0.16, 0.5, 0.84], plot_contours=True, label_args={'fontsize':15}, color='black')
 #	figure.gca().annotate("MC Uncertainty Analysis of {0} Pyspeckit Fitting".format(name), xy=(1.2, 1.0), xycoords="figure fraction", xytext=(0, -5), textcoords="offset points", ha="center", va="top")
-#	plt.savefig('/Users/saracamnasio/Research/Projects/UnusuallyRB/2016_Analysis/New_fits_June16/{0}_{1}/{1}_MCplot_coeffs.png'.format(n, name), format='png')
+#	plt.savefig('/Users/saracamnasio/Dropbox/Research/Projects/UnusuallyRB/2016_Analysis/New_fits_June16/{0}_{1}/{1}_MCplot_coeffs.png'.format(n, name), format='png')
 #	plt.close()
 # #
 #	CP_MC = np.vstack([IP, lmin, lmax])
@@ -539,15 +539,15 @@ def MC(N, z):
 
 #	figure2 = corner.corner(CP_MC2, labels=[r"$Inflection Point$", r"$Local Min$", r"$Local max$"], quantiles=[0.16, 0.5, 0.84], plot_contours=True, label_args={'fontsize':15}, color='black')
 #	figure2.gca().annotate("MC Uncertainty Analysis of {0} Pyspeckit Fitting".format(name), xy=(1.2, 1.0), xycoords="figure fraction", xytext=(0, -5), textcoords="offset points", ha="center", va="top")
-#	plt.savefig('/Users/saracamnasio/Research/Projects/UnusuallyRB/2016_Analysis/New_fits_June16/{0}_{1}/{1}_MC_CPpoints.png'.format(n, name), format='png')
+#	plt.savefig('/Users/saracamnasio/Dropbox/Research/Projects/UnusuallyRB/2016_Analysis/New_fits_June16/{0}_{1}/{1}_MC_CPpoints.png'.format(n, name), format='png')
 #	plt.close()
 # #
 #	# output_arrays = np.vstack([coeff0, coeff1, coeff2, coeff3, coeff4, lmin, lmax, IP])
 #	# output_arrays = np.transpose(output_arrays)
-#	# np.savetxt('/Users/saracamnasio/Research/Projects/UnusuallyRB/2016_Analysis/New_fits_June16/{0}_{1}/{1}_unc_arrays.txt'.format(n, name), output_arrays)
+#	# np.savetxt('/Users/saracamnasio/Dropbox/Research/Projects/UnusuallyRB/2016_Analysis/New_fits_June16/{0}_{1}/{1}_unc_arrays.txt'.format(n, name), output_arrays)
 
 #	# results_row = [n, name, mu0, sigma0, mu1, sigma1, mu2, sigma2, mu3, sigma3, mu4, sigma4, mu5, sigma5, mu6, sigma6, mu7, sigma7]
 
-#	# with open("/Users/saracamnasio/Research/Projects/UnusuallyRB/2016_Analysis/New_fits_June16/Results.csv", "a") as fp:
+#	# with open("/Users/saracamnasio/Dropbox/Research/Projects/UnusuallyRB/2016_Analysis/New_fits_June16/Results.csv", "a") as fp:
 #		# wr = csv.writer(fp, dialect='excel')
 #		# wr.writerow(results_row)
