@@ -17,16 +17,11 @@ import seaborn as sns
 from matplotlib.font_manager import FontProperties
 sns.set(color_codes=True)
 
-
-
-# Grabbing the coefficients from the analysis results table
+# Importing results from table
 source = np.genfromtxt('/Users/saracamnasio/Dropbox/Research/Projects/UnusuallyRB/2016_Analysis/plotting/CP_results.csv',delimiter=',', skip_header=1, dtype = float)
 source1 = np.genfromtxt('/Users/saracamnasio/Dropbox/Research/Projects/UnusuallyRB/2016_Analysis/plotting/CP_results.csv',delimiter=',', skip_header=1, dtype = str)
 
-# Importing the names from the same table, same order, just as strings
-# source_name = np.genfromtxt('/Users/saracamnasio/Desktop/Master_Sheet.csv',delimiter=',', skip_header=1, dtype = str)
-
-# Grabbing only the coefficients from the table
+# Naming values for easier plotting adjustments:
 names = source1[:,0]
 IP = source[:,18]
 IP_unc = source[:,19]
@@ -56,6 +51,9 @@ marker_size = source[:,27]
 #toggle this to see double objects:
 #color_value = source1[:,26]
 
+#testing hex colors:
+color_value = ["#0080ff", "k", "k", "#b30000", "#b30000", "#b30000", "#b30000", "grey", "#0080ff", "k", "k", "#b30000", "grey", "#0080ff", "#0080ff", "#0080ff", "#0080ff", "#0080ff", "#b30000", "#0080ff", "#0000b3", "#0080ff", "grey", "grey", "grey", "grey", "#0080ff", "#0080ff", "#0080ff", "#0080ff", "#0080ff", "#b30000", "#0000b3", "#0080ff", "#ff5600", "#ff5600", "#ff5600", "#0080ff", "k", "k", "k", "#b30000", "#b30000", "#b30000", "#b30000", "#0080ff", "grey", "grey", "#b30000", "#b30000", "#b30000", "#b30000", "#b30000", "k", "k", "k", "#0000b3", "#b30000", "#b30000"]
+
 def plots():
 
 
@@ -63,88 +61,87 @@ def plots():
 
 	sns.reset_orig()
 
-	data1 = mlines.Line2D([], [], color='r', marker='o', label="Non-Young", linestyle='', markersize=8)
-	data2 = mlines.Line2D([], [], color='r', marker='^', label="Young", linestyle='', markersize=8)
-	data3 = mlines.Line2D([], [], color='k', marker='*', label="Standard", linestyle='', markersize=12)
-	data6 = mlines.Line2D([], [], color='grey', marker='*', label="Field", linestyle='', markersize=12)
-	data4 = mlines.Line2D([], [], color='b', marker='^', label="Subdwarf", linestyle='', markersize=8)
-	data5 = mlines.Line2D([], [], color='b', marker='o', label="Non-Subdwarf", linestyle='', markersize=8)
+	data1 = mlines.Line2D([], [], color='grey', marker='*', label="Field", linestyle='', markersize=12)
+	data2 = mlines.Line2D([], [], color='k', marker='*', label="Standard", linestyle='', markersize=12)
+	data3 = mlines.Line2D([], [], color='#0000b3', marker='o', label="Extremely Blue $(\Delta J-K_{s})\geq 2 \sigma$", linestyle='', markersize=8)
+	data4 = mlines.Line2D([], [], color='#0080ff', marker='o', label="Bluer than avg $(\Delta J-K_{s})< 2 \sigma$", linestyle='', markersize=8)
+	data5 = mlines.Line2D([], [], color='#b30000', marker='o', label="Extremely Red $(\Delta J-K_{s})\geq 2 \sigma$", linestyle='', markersize=8)
+	data6 = mlines.Line2D([], [], color='#ff5600', marker='o', label="Redder than avg $(\Delta J-K_{s})< 2 \sigma$", linestyle='', markersize=8)
 
 	#LMIN/LMAX vs J-K
 	plt.figure() 
 	for n in range(len(names)):
-
+		
 		plt.subplots_adjust(hspace=0.001)
 		ax1 = plt.subplot(211)
-		plt.errorbar(JK[n], lmin[n], xerr=JK_unc[n], yerr=lmin_unc[n], fmt='none', alpha=0.5, linestyle='None', ecolor=color_value[n], elinewidth=2)
-		plt.scatter(JK[n], lmin[n], alpha = 0.9, s=marker_size[n], c=color_value[n], marker=marker_value[n])
-		plt.xlabel("$J-K_{s}$ Color")
+		plt.errorbar(JK_dev[n], lmin[n], xerr=JK_dev_unc[n], yerr=lmin_unc[n], fmt='none', alpha=0.5, linestyle='None', ecolor='k', elinewidth=2)
+		plt.scatter(JK_dev[n], lmin[n], alpha = 0.9, s=marker_size[n], c=color_value[n], marker=marker_value[n])
+		plt.xlabel("$J-K-(J-K_{s})_{avg}$")
 		plt.ylabel("Local Mininimum ($\lambda$)")
-		plt.xlim(0.7,3.2)
-	
+		plt.legend((data1, data2, data3, data4, data5, data6), ("Field", "Standard", "Extremely Blue $(\Delta J-K_{s})\geq 2 \sigma$", "Bluer than avg $(\Delta J-K_{s})< 2 \sigma$", "Extremely Red $(\Delta J-K_{s})\geq 2 \sigma$", "Redder than avg $(\Delta J-K_{s})< 2 \sigma$"), fontsize= 9,  loc=3, numpoints=1) #bbox_to_anchor=(.9, 1.25)
+
 	
 		ax2 = plt.subplot(212, sharex=ax1)
-		plt.errorbar(JK[n], lmax[n], xerr=JK_unc[n], yerr=lmax_unc[n], fmt='none', alpha=0.5, linestyle='None', ecolor=color_value[n], elinewidth=2)
-		plt.scatter(JK[n], lmax[n], alpha = 0.9, s=marker_size[n], c=color_value[n], marker=marker_value[n])
-		plt.xlabel("$J-K_{s}$ Color")
+		plt.errorbar(JK_dev[n], lmax[n], xerr=JK_dev_unc[n], yerr=lmax_unc[n], fmt='none', alpha=0.5, linestyle='None', ecolor='k', elinewidth=2)
+		plt.scatter(JK_dev[n], lmax[n], alpha = 0.9, s=marker_size[n], c=color_value[n], marker=marker_value[n])
+		plt.xlabel("$J-K-(J-K_{s})_{avg}$")
 		plt.ylabel("Local Maximum ($\lambda$)")
-		plt.xlim(.7,3.2)
+		#plt.xlim(.7,3.2)
 		plt.ylim(1.23,1.33)
 
 		plt.setp(ax1.get_xticklabels(), visible=False)
-		plt.legend((data6, data3, data5, data4, data1, data2), ("Field", "Standard", "Non-Subdwarf", "Subdwarf", "Non-Young", "Young"), fontsize= 13,  loc=2, numpoints=1, bbox_to_anchor=(.9, 1.25))
-
+		
 	#LMIN/LMAX vs H-K
 	plt.figure()
 	for n in range(len(names)):
 		plt.subplots_adjust(hspace=0.001)
 		ax3 = plt.subplot(211)
-		plt.errorbar(HK[n], lmin[n], xerr=HK_unc[n], yerr=lmin_unc[n], fmt='none', alpha=0.5, linestyle='None', ecolor=color_value[n], elinewidth=2, zorder=-1)
-		plt.scatter(HK[n], lmin[n], alpha = 0.9, s=marker_size[n], c=color_value[n], marker=marker_value[n], zorder=1)
-		plt.xlabel("$H-K_{s}$ Color")
+		plt.errorbar(HK_dev[n], lmin[n], xerr=HK_dev_unc[n], yerr=lmin_unc[n], fmt='none', alpha=0.5, linestyle='None', ecolor='k', elinewidth=2, zorder=-1)
+		plt.scatter(HK_dev[n], lmin[n], alpha = 0.9, s=marker_size[n], c=color_value[n], marker=marker_value[n], zorder=1)
+		plt.xlabel("$H-K-(H-K_{s})_{avg}$")
 		plt.ylabel("Local Mininimum ($\lambda$)")
 		plt.ylim(1.145,1.195)
-	
+		plt.legend((data1, data2, data3, data4, data5, data6), ("Field", "Standard", "Extremely Blue $(\Delta J-K_{s})\geq 2 \sigma$", "Bluer than avg $(\Delta J-K_{s})< 2 \sigma$", "Extremely Red $(\Delta J-K_{s})\geq 2 \sigma$", "Redder than avg $(\Delta J-K_{s})< 2 \sigma$"), fontsize= 9,  loc=3, numpoints=1)
+
 	
 		ax4 = plt.subplot(212, sharex=ax3)
-		plt.errorbar(HK[n], lmax[n], xerr=HK_unc[n], yerr=lmax_unc[n], fmt='none', alpha=0.5, linestyle='None', ecolor=color_value[n], elinewidth=2, zorder=-1)
-		plt.scatter(HK[n], lmax[n], alpha = 0.9, s=marker_size[n], c=color_value[n], marker=marker_value[n], zorder=1)
-		plt.xlabel("$H-K_{s}$ Color")
+		plt.errorbar(HK_dev[n], lmax[n], xerr=HK_dev_unc[n], yerr=lmax_unc[n], fmt='none', alpha=0.5, linestyle='None', ecolor='k', elinewidth=2, zorder=-1)
+		plt.scatter(HK_dev[n], lmax[n], alpha = 0.9, s=marker_size[n], c=color_value[n], marker=marker_value[n], zorder=1)
+		plt.xlabel("$H-K-(H-K_{s})_{avg}$")
 		plt.ylabel("Local Maximum ($\lambda$)")
 		plt.ylim(1.24,1.315)
-		plt.xlim(.3,1.4)
+		#plt.xlim(.3,1.4)
 		
 		plt.setp(ax3.get_xticklabels(), visible=False)
-		plt.legend((data6, data3, data5, data4, data1, data2), ("Field", "Standard", "Non-Subdwarf", "Subdwarf", "Non-Young", "Young"), fontsize= 13,  loc=2, numpoints=1, bbox_to_anchor=(.9, 1.25))
-
+		
 	#LMIN/LMAX vs J-H
 	plt.figure()
 	for n in range(len(names)):
 		plt.subplots_adjust(hspace=0.001)
 		ax5 = plt.subplot(211)
-		plt.errorbar(JH[n], lmin[n], xerr=JH_unc[n], yerr=lmin_unc[n], fmt='none', alpha=0.5, linestyle='None', ecolor=color_value[n], elinewidth=2, zorder=-1)
-		plt.scatter(JH[n], lmin[n], alpha = 0.9, s=marker_size[n], c=color_value[n], marker=marker_value[n], zorder=1)
-		plt.xlabel("$J-H_{s}$ Color")
+		plt.errorbar(JH_dev[n], lmin[n], xerr=JH_dev_unc[n], yerr=lmin_unc[n], fmt='none', alpha=0.5, linestyle='None', ecolor='k', elinewidth=2, zorder=-1)
+		plt.scatter(JH_dev[n], lmin[n], alpha = 0.9, s=marker_size[n], c=color_value[n], marker=marker_value[n], zorder=1)
+		plt.xlabel("$J-H-(J-H)_{avg}$")
 		plt.ylabel("Local Mininimum ($\lambda$)")
 		plt.ylim(1.145,1.195)
-	
+		plt.legend((data1, data2, data3, data4, data5, data6), ("Field", "Standard", "Extremely Blue $(\Delta J-K_{s})\geq 2 \sigma$", "Bluer than avg $(\Delta J-K_{s})< 2 \sigma$", "Extremely Red $(\Delta J-K_{s})\geq 2 \sigma$", "Redder than avg $(\Delta J-K_{s})< 2 \sigma$"), fontsize= 9,  loc=3, numpoints=1)
+
 	
 		ax6 = plt.subplot(212, sharex=ax5)
-		plt.errorbar(JH[n], lmax[n], xerr=JH_unc[n], yerr=lmax_unc[n], fmt='none', alpha=0.5, linestyle='None', ecolor=color_value[n], elinewidth=2, zorder=-1)
-		plt.scatter(JH[n], lmax[n], alpha = 0.9, s=marker_size[n], c=color_value[n], marker=marker_value[n], zorder=1)
-		plt.xlabel("$J-H_{s}$ Color")
+		plt.errorbar(JH_dev[n], lmax[n], xerr=JH_dev_unc[n], yerr=lmax_unc[n], fmt='none', alpha=0.5, linestyle='None', ecolor='k', elinewidth=2, zorder=-1)
+		plt.scatter(JH_dev[n], lmax[n], alpha = 0.9, s=marker_size[n], c=color_value[n], marker=marker_value[n], zorder=1)
+		plt.xlabel("$J-H-(J-H)_{avg}$")
 		plt.ylabel("Local Maximum ($\lambda$)")
 		plt.ylim(1.24,1.325)
-		plt.xlim(.2,1.9)
+		#plt.xlim(.2,1.9)
 		
 		plt.setp(ax5.get_xticklabels(), visible=False)
-		plt.legend((data6, data3, data5, data4, data1, data2), ("Field", "Standard", "Non-Subdwarf", "Subdwarf", "Non-Young", "Young"), fontsize= 13,  loc=2, numpoints=1, bbox_to_anchor=(.9, 1.25))
-
+		
 	plt.figure()
 	for n in range(len(names)):
 		plt.subplots_adjust(hspace=0.001)
 		P1 = plt.subplot(211)
-		plt.errorbar(opt_spt[n], lmin[n], yerr=lmin_unc[n], fmt='none', alpha=0.5, linestyle='None', ecolor=color_value[n], elinewidth=2, zorder=-1)
+		plt.errorbar(opt_spt[n], lmin[n], yerr=lmin_unc[n], fmt='none', alpha=0.5, linestyle='None', ecolor='k', elinewidth=2, zorder=-1)
 		plt.scatter(opt_spt[n], lmin[n], alpha = 0.9, s=marker_size[n], c=color_value[n], marker=marker_value[n], zorder=1)
 		plt.xlabel("Spectral Type")
 		plt.ylabel("Local Mininimum ($\lambda$)")
@@ -155,7 +152,7 @@ def plots():
 	
 	
 		P2 = plt.subplot(212, sharex=P1)
-		plt.errorbar(opt_spt[n], lmax[n], yerr=lmax_unc[n], fmt='none', alpha=0.5, linestyle='None', ecolor=color_value[n], elinewidth=2, zorder=-1)
+		plt.errorbar(opt_spt[n], lmax[n], yerr=lmax_unc[n], fmt='none', alpha=0.5, linestyle='None', ecolor='k', elinewidth=2, zorder=-1)
 		plt.scatter(opt_spt[n], lmax[n], alpha = 0.9, s=marker_size[n], c=color_value[n], marker=marker_value[n], zorder=1)
 		plt.xlabel("Spectral Type")
 		plt.ylabel("Local Maximum ($\lambda$)")
@@ -165,76 +162,21 @@ def plots():
 		plt.ylim(1.23,1.325)
 		
 		plt.setp(P1.get_xticklabels(), visible=False)
-		plt.legend((data6, data3, data5, data4, data1, data2), ("Field", "Standard", "Non-Subdwarf", "Subdwarf", "Non-Young", "Young"), fontsize= 13,  loc=2, numpoints=1, bbox_to_anchor=(.9, 1.25))
+		plt.legend((data1, data2, data3, data4, data5, data6), ("Field", "Standard", "Extremely Blue $(\Delta J-K_{s})\geq 2 \sigma$", "Bluer than avg $(\Delta J-K_{s})< 2 \sigma$", "Extremely Red $(\Delta J-K_{s})\geq 2 \sigma$", "Redder than avg $(\Delta J-K_{s})< 2 \sigma$"), fontsize= 9,  loc=3, numpoints=1)
 	
 def sea():
-	red = []
-	blue = []
 
-	for n in range(len(names)):
-		if obj_type[n] == 'red' or 'young':
-			red.append(source[n,:])
+	source_data = pd.read_csv('/Users/saracamnasio/Dropbox/Research/Projects/UnusuallyRB/2016_Analysis/plotting/CP_results.csv')
+	sns.pairplot(source_data, hue="Classification", vars=["Opt_SpT", "Lmin_mu"], palette="Set2", diag_kind="kde", size=2.5)
+	sns.pairplot(source_data, hue="Classification", vars=["Opt_SpT", "Lmax_mu"], palette="Set2", diag_kind="kde", size=2.5)
 
-		elif obj_type[n] == 'blue':
-			blue.append(source[n,:])
-		else:
-			pass
+	sns.pairplot(source_data, hue="Classification", vars=["JK_Dev", "Lmin_mu"], palette="Set2", diag_kind="kde", size=2.5)
+	sns.pairplot(source_data, hue="Classification", vars=["HK_Dev", "Lmin_mu"], palette="Set2", diag_kind="kde", size=2.5)
+	sns.pairplot(source_data, hue="Classification", vars=["JH_Dev", "Lmin_mu"], palette="Set2", diag_kind="kde", size=2.5)
+
+	sns.pairplot(source_data, hue="Classification", vars=["JK_Dev", "Lmax_mu"], palette="Set2", diag_kind="kde", size=2.5)
+	sns.pairplot(source_data, hue="Classification", vars=["HK_Dev", "Lmax_mu"], palette="Set2", diag_kind="kde", size=2.5)
+	sns.pairplot(source_data, hue="Classification", vars=["JH_Dev", "Lmax_mu"], palette="Set2", diag_kind="kde", size=2.5)
+
+	# sns.jointplot(x="Opt_SpT", y="Lmin_mu", hue="Classification", data=tips2, kind="kde")
 	
-
-
-	plt.figure()
-	sns.jointplot(red[:,5], red[:,20], kind="reg", color="#cc3300")
-	sns.jointplot(blue[:,5], blue[:,20], kind="reg", color="#cc3300")
-
-	# fig.set(xlabel='J-K Color', ylabel='Local maximum')
-	plt.xlabel('J-K Color')
-	plt.ylabel('Local Max')
-	
-	# sns.jointplot(x=JH, y=lmin, kind="reg")
-	# plt.xlabel('J-H Color')
-	# plt.ylabel('Local Min')
-	# 
-# 
-	# sns.jointplot(x=JH, y=lmax, kind="reg")
-	# plt.xlabel('J-H Color')
-	# plt.ylabel('Local Max')
-	# 
-# 
-	# sns.jointplot(x=HK, y=lmin, kind="reg")
-	# plt.xlabel('H-K Color')
-	# plt.ylabel('Local Min')
-	# 
-# 
-	# sns.jointplot(x=HK, y=lmax, kind="reg")
-	# plt.xlabel('H-K Color')
-	# plt.ylabel('Local Max')
-# 
-# 
-	# sns.jointplot(x=JK_dev, y=lmin, kind="reg")
-	# plt.xlabel('J-K Dev')
-	# plt.ylabel('Local Min')
-	# 
-# 
-	# sns.jointplot(x=JK_dev, y=lmax, kind="reg")
-	# plt.xlabel('J-K Dev')
-	# plt.ylabel('Local Max')
-# 
-# 
-	# sns.jointplot(x=opt_spt, y=lmin, kind="reg")
-	# plt.xlabel('Optical Spt')
-	# plt.ylabel('Local Min')
-	# 
-# 
-	# sns.jointplot(x=opt_spt, y=lmax, kind="reg")
-	# plt.xlabel('Opt spt')
-	# plt.ylabel('Local Max')
-	# 
-# 
-
-
-
-	# np.savetxt()
-
-	# to use when saving plotting result or plotting table:
-	#date_format = time.strftime("%d/%m/%Y")
-
