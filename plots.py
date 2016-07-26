@@ -1,10 +1,7 @@
 ''' 
 Written by Sara Camnasio
-CUNY Hunter College class of 2016
 sara.camnasio@gmail.com
 
-Current to do list 04/20/2016:
-- Add uncertainties 
 '''
 
 import numpy as np
@@ -42,22 +39,21 @@ HK_dev = source[:,13]
 HK_dev_unc = source[:,14]
 JH_dev = source[:,15]
 JH_dev_unc = source[:,16]
-color_value = source1[:,24]
+#color_value = source1[:,24]
 marker_value = source1[:,25]
 opt_spt = source[:,2]
 opt_spt_unc = source[:,3]
 marker_size = source[:,27]
 
 #toggle this to see double objects:
-#color_value = source1[:,26]
+color_value = source1[:,26]
 
 #testing hex colors:
-color_value = ["#0080ff", "k", "k", "#b30000", "#b30000", "#b30000", "#b30000", "grey", "#0080ff", "k", "k", "#b30000", "grey", "#0080ff", "#0080ff", "#0080ff", "#0080ff", "#0080ff", "#b30000", "#0080ff", "#0000b3", "#0080ff", "grey", "grey", "grey", "grey", "#0080ff", "#0080ff", "#0080ff", "#0080ff", "#0080ff", "#b30000", "#0000b3", "#0080ff", "#ff5600", "#ff5600", "#ff5600", "#0080ff", "k", "k", "k", "#b30000", "#b30000", "#b30000", "#b30000", "#0080ff", "grey", "grey", "#b30000", "#b30000", "#b30000", "#b30000", "#b30000", "k", "k", "k", "#0000b3", "#b30000", "#b30000"]
+#color_value = ["#0080ff", "k", "k", "#b30000", "#b30000", "#b30000", "#b30000", "grey", "#0080ff", "k", "k", "#b30000", "grey", "#0080ff", "#0080ff", "#0080ff", "#0080ff", "#0080ff", "#b30000", "#0080ff", "#0000b3", "#0080ff", "grey", "grey", "grey", "grey", "#0080ff", "#0080ff", "#0080ff", "#0080ff", "#0080ff", "#b30000", "#0000b3", "#0080ff", "#ff5600", "#ff5600", "#ff5600", "#0080ff", "k", "k", "k", "#b30000", "#b30000", "#b30000", "#b30000", "#0080ff", "grey", "grey", "#b30000", "#b30000", "#b30000", "#b30000", "#b30000", "k", "k", "k", "#0000b3", "#b30000", "#b30000"]
 
 def plots():
 
-
-	''' This function outputs local max, min, and inflection points in terms of wavelength '''
+	''' Plots results from csv table into 4 figures, 1x2 subplot each'''
 
 	sns.reset_orig()
 
@@ -69,7 +65,7 @@ def plots():
 	data6 = mlines.Line2D([], [], color='#ff5600', marker='o', label="Redder than avg $(\Delta J-K_{s})< 2 \sigma$", linestyle='', markersize=8)
 
 	#LMIN/LMAX vs J-K
-	plt.figure() 
+	plt.figure(figsize=(15, 9)) 
 	for n in range(len(names)):
 		
 		plt.subplots_adjust(hspace=0.001)
@@ -86,13 +82,13 @@ def plots():
 		plt.scatter(JK_dev[n], lmax[n], alpha = 0.9, s=marker_size[n], c=color_value[n], marker=marker_value[n])
 		plt.xlabel("$J-K-(J-K_{s})_{avg}$")
 		plt.ylabel("Local Maximum ($\lambda$)")
-		#plt.xlim(.7,3.2)
+		plt.xlim(-1,.8)
 		plt.ylim(1.23,1.33)
 
 		plt.setp(ax1.get_xticklabels(), visible=False)
 		
 	#LMIN/LMAX vs H-K
-	plt.figure()
+	plt.figure(figsize=(15, 9))
 	for n in range(len(names)):
 		plt.subplots_adjust(hspace=0.001)
 		ax3 = plt.subplot(211)
@@ -101,8 +97,7 @@ def plots():
 		plt.xlabel("$H-K-(H-K_{s})_{avg}$")
 		plt.ylabel("Local Mininimum ($\lambda$)")
 		plt.ylim(1.145,1.195)
-		plt.legend((data1, data2, data3, data4, data5, data6), ("Field", "Standard", "Extremely Blue $(\Delta J-K_{s})\geq 2 \sigma$", "Bluer than avg $(\Delta J-K_{s})< 2 \sigma$", "Extremely Red $(\Delta J-K_{s})\geq 2 \sigma$", "Redder than avg $(\Delta J-K_{s})< 2 \sigma$"), fontsize= 9,  loc=3, numpoints=1)
-
+		
 	
 		ax4 = plt.subplot(212, sharex=ax3)
 		plt.errorbar(HK_dev[n], lmax[n], xerr=HK_dev_unc[n], yerr=lmax_unc[n], fmt='none', alpha=0.5, linestyle='None', ecolor='k', elinewidth=2, zorder=-1)
@@ -110,12 +105,12 @@ def plots():
 		plt.xlabel("$H-K-(H-K_{s})_{avg}$")
 		plt.ylabel("Local Maximum ($\lambda$)")
 		plt.ylim(1.24,1.315)
-		#plt.xlim(.3,1.4)
-		
+		plt.xlim(-.4,.7)
+		plt.legend((data1, data2, data3, data4, data5, data6), ("Field", "Standard", "Extremely Blue $(\Delta J-K_{s})\geq 2 \sigma$", "Bluer than avg $(\Delta J-K_{s})< 2 \sigma$", "Extremely Red $(\Delta J-K_{s})\geq 2 \sigma$", "Redder than avg $(\Delta J-K_{s})< 2 \sigma$"), fontsize= 9,  loc=3, numpoints=1)
 		plt.setp(ax3.get_xticklabels(), visible=False)
 		
 	#LMIN/LMAX vs J-H
-	plt.figure()
+	plt.figure(figsize=(15, 9))
 	for n in range(len(names)):
 		plt.subplots_adjust(hspace=0.001)
 		ax5 = plt.subplot(211)
@@ -124,7 +119,7 @@ def plots():
 		plt.xlabel("$J-H-(J-H)_{avg}$")
 		plt.ylabel("Local Mininimum ($\lambda$)")
 		plt.ylim(1.145,1.195)
-		plt.legend((data1, data2, data3, data4, data5, data6), ("Field", "Standard", "Extremely Blue $(\Delta J-K_{s})\geq 2 \sigma$", "Bluer than avg $(\Delta J-K_{s})< 2 \sigma$", "Extremely Red $(\Delta J-K_{s})\geq 2 \sigma$", "Redder than avg $(\Delta J-K_{s})< 2 \sigma$"), fontsize= 9,  loc=3, numpoints=1)
+		plt.legend((data1, data2, data3, data4, data5, data6), ("Field", "Standard", "Extremely Blue $(\Delta J-K_{s})\geq 2 \sigma$", "Bluer than avg $(\Delta J-K_{s})< 2 \sigma$", "Extremely Red $(\Delta J-K_{s})\geq 2 \sigma$", "Redder than avg $(\Delta J-K_{s})< 2 \sigma$"), fontsize= 9,  loc=4, numpoints=1)
 
 	
 		ax6 = plt.subplot(212, sharex=ax5)
@@ -133,11 +128,11 @@ def plots():
 		plt.xlabel("$J-H-(J-H)_{avg}$")
 		plt.ylabel("Local Maximum ($\lambda$)")
 		plt.ylim(1.24,1.325)
-		#plt.xlim(.2,1.9)
+		plt.xlim(-1,1.5)
 		
 		plt.setp(ax5.get_xticklabels(), visible=False)
 		
-	plt.figure()
+	plt.figure(figsize=(15, 9))
 	for n in range(len(names)):
 		plt.subplots_adjust(hspace=0.001)
 		P1 = plt.subplot(211)
@@ -149,6 +144,8 @@ def plots():
 		labels = ['','L0','L1','L2','L3','L4','L5','L6','L7','L8','L9']
 		P1.set_xticklabels(labels)
 		plt.ylim(1.14,1.2)
+		plt.legend((data1, data2, data3, data4, data5, data6), ("Field", "Standard", "Extremely Blue $(\Delta J-K_{s})\geq 2 \sigma$", "Bluer than avg $(\Delta J-K_{s})< 2 \sigma$", "Extremely Red $(\Delta J-K_{s})\geq 2 \sigma$", "Redder than avg $(\Delta J-K_{s})< 2 \sigma$"), fontsize= 9,  loc=3, numpoints=1)
+	
 	
 	
 		P2 = plt.subplot(212, sharex=P1)
@@ -156,14 +153,12 @@ def plots():
 		plt.scatter(opt_spt[n], lmax[n], alpha = 0.9, s=marker_size[n], c=color_value[n], marker=marker_value[n], zorder=1)
 		plt.xlabel("Spectral Type")
 		plt.ylabel("Local Maximum ($\lambda$)")
-		plt.xticks(np.arange(9,20,1))
+		#plt.xticks(np.arange(9,20,1))
 		labels = ['','L0','L1','L2','L3','L4','L5','L6','L7','L8','L9']
 		P2.set_xticklabels(labels)
 		plt.ylim(1.23,1.325)
-		
 		plt.setp(P1.get_xticklabels(), visible=False)
-		plt.legend((data1, data2, data3, data4, data5, data6), ("Field", "Standard", "Extremely Blue $(\Delta J-K_{s})\geq 2 \sigma$", "Bluer than avg $(\Delta J-K_{s})< 2 \sigma$", "Extremely Red $(\Delta J-K_{s})\geq 2 \sigma$", "Redder than avg $(\Delta J-K_{s})< 2 \sigma$"), fontsize= 9,  loc=3, numpoints=1)
-	
+		
 def sea():
 
 	source_data = pd.read_csv('/Users/saracamnasio/Dropbox/Research/Projects/UnusuallyRB/2016_Analysis/plotting/CP_results.csv')
